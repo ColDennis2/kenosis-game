@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kenosis Game Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0D0F14;
+    --surface:   #13161D;
+    --surface2:  #1A1E28;
+    --border:    #252B38;
+    --border2:   #313848;
+    --gold:      #C9A84C;
+    --gold-dim:  #8A6E2F;
+    --crimson:   #8B2E2E;
+    --crimson-l: #C04444;
+    --cream:     #F2EAD3;
+    --ink:       #12100A;
+    --text:      #C8D0DC;
+    --text-dim:  #5C6880;
+    --card-bg:   #F2EAD3;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  header h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -.02em;
+    color: var(--text);
+  }
+  header h1 span { color: var(--gold); }
+  header p { font-size: .8rem; color: var(--text-dim); margin-left: auto; font-weight: 400; }
+
+  /* ── Main layout ── */
+  main { flex: 1; display: grid; grid-template-columns: 360px 1fr; gap: 0; min-height: 0; }
+
+  /* ── Left panel ── */
+  .panel-form {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1.6rem 1.5rem;
+    display: flex; flex-direction: column; gap: 1.2rem;
+    overflow-y: auto;
+  }
+  .panel-form h2 { font-size: .7rem; font-weight: 600; letter-spacing: .08em; color: var(--text-dim); text-transform: uppercase; }
+
+  .field { display: flex; flex-direction: column; gap: .4rem; }
+  .field label { font-size: .7rem; font-weight: 500; letter-spacing: .04em; color: var(--text-dim); text-transform: uppercase; }
+  .field input, .field textarea, .field select {
+    background: var(--bg); border: 1px solid var(--border2); border-radius: 6px;
+    color: var(--text); font-family: 'Inter', sans-serif; font-size: .875rem;
+    padding: .5rem .7rem; transition: border-color .15s, box-shadow .15s; outline: none; resize: none;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.1);
+  }
+  .field select option { background: #13161D; }
+
+  /* ── Energy cost picker ── */
+  .cost-picker { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+  .cost-btn {
+    width: 32px; height: 32px; border-radius: 6px;
+    border: 1px solid var(--border2); background: var(--bg);
+    color: var(--text-dim); font-family: 'Inter', sans-serif;
+    font-size: .82rem; font-weight: 600; cursor: pointer;
+    transition: all .13s; display: flex; align-items: center; justify-content: center;
+  }
+  .cost-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .cost-btn.active { background: var(--gold); color: #0D0F14; border-color: var(--gold); }
+  .cost-btn.x-btn { font-style: italic; font-size: .9rem; }
+  .cost-custom-wrap { display: flex; align-items: center; gap: .3rem; margin-left: .1rem; }
+  .cost-custom-wrap input {
+    width: 44px; text-align: center; padding: .3rem .2rem;
+    font-size: .82rem; font-weight: 600; border-radius: 6px;
+    border: 1px solid var(--border2); background: var(--bg); color: var(--text);
+    outline: none;
+  }
+  .cost-custom-wrap input:focus { border-color: var(--gold); }
+  .cost-custom-wrap input.active { border-color: var(--gold); background: rgba(201,168,76,.08); }
+  .cost-custom-wrap span { font-size: .68rem; color: var(--text-dim); }
+
+  /* ── Rarity ── */
+  .rarity-group { display: flex; gap: .4rem; }
+  .rarity-btn {
+    flex: 1; padding: .38rem .2rem; border-radius: 6px; border: 1px solid var(--border2);
+    background: transparent; color: var(--text-dim); font-family: 'Inter', sans-serif;
+    font-size: .68rem; font-weight: 500; letter-spacing: .04em; cursor: pointer;
+    transition: all .15s; text-transform: uppercase;
+  }
+  .rarity-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .rarity-btn.active { background: var(--gold); color: #0D0F14; border-color: var(--gold); font-weight: 600; }
+
+  /* ── Color swatches ── */
+  .color-swatches { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .swatch {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 2px solid transparent; cursor: pointer;
+    transition: transform .15s, box-shadow .15s; position: relative;
+  }
+  .swatch:hover { transform: scale(1.15); }
+  .swatch.active { border-color: white; box-shadow: 0 0 0 2px rgba(255,255,255,.3); transform: scale(1.1); }
+
+  /* ── Artwork upload ── */
+  .art-upload {
+    border: 1px dashed var(--border2); border-radius: 8px; padding: 1rem; text-align: center;
+    cursor: pointer; transition: border-color .15s, background .15s;
+    font-size: .8rem; color: var(--text-dim); position: relative; font-weight: 400;
+  }
+  .art-upload:hover { border-color: var(--gold); background: rgba(201,168,76,.03); color: var(--text); }
+  .art-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .art-upload span { pointer-events: none; }
+
+  /* ── Rich text editor for card text ── */
+  .desc-editor-wrap { display: flex; flex-direction: column; gap: .5rem; }
+  .desc-toolbar {
+    display: flex; align-items: center; gap: .4rem;
+    background: var(--bg); border: 1px solid var(--border2);
+    border-radius: 6px 6px 0 0; padding: .4rem .6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .desc-toolbar-label { font-size: .65rem; color: var(--text-dim); font-weight: 500; margin-right: .2rem; }
+  .kw-color-btn {
+    display: flex; align-items: center; gap: .3rem;
+    padding: .25rem .55rem; border-radius: 5px;
+    border: 1px solid var(--border2); background: transparent;
+    font-family: 'Inter', sans-serif; font-size: .72rem; font-weight: 600;
+    cursor: pointer; transition: all .13s; color: var(--text-dim);
+  }
+  .kw-color-btn .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .kw-color-btn:hover { border-color: rgba(255,255,255,.2); color: var(--text); }
+  .kw-color-btn.active { border-color: currentColor; }
+  .kw-color-btn[data-kwcolor="default"]  { color: #a0aab8; }
+  .kw-color-btn[data-kwcolor="red"]      { color: #e05555; }
+  .kw-color-btn[data-kwcolor="orange"]   { color: #e07030; }
+  .kw-color-btn[data-kwcolor="yellow"]   { color: #d4b832; }
+  .kw-color-btn.active[data-kwcolor="default"]  .dot { background: #a0aab8; }
+  .kw-color-btn.active[data-kwcolor="red"]      .dot { background: #e05555; }
+  .kw-color-btn.active[data-kwcolor="orange"]   .dot { background: #e07030; }
+  .kw-color-btn.active[data-kwcolor="yellow"]   .dot { background: #d4b832; }
+
+  .desc-hint { font-size: .67rem; color: var(--text-dim); line-height: 1.4; }
+  .desc-hint code { background: var(--surface2); border-radius: 3px; padding: .05rem .3rem; font-size: .65rem; font-family: monospace; }
+
+  /* The live keyword editor (contenteditable) */
+  .desc-live {
+    background: var(--bg); border: 1px solid var(--border2);
+    border-top: none; border-radius: 0 0 6px 6px;
+    min-height: 110px; padding: .55rem .7rem;
+    font-family: 'DM Sans', sans-serif; font-size: .875rem; line-height: 1.6;
+    color: var(--text); outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    word-break: break-word;
+  }
+  .desc-live:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.1); }
+  .desc-live .kw-tag {
+    display: inline-flex; align-items: center; gap: 2px;
+    border-radius: 4px; padding: 0 5px 0 4px;
+    font-weight: 700; cursor: default;
+    background: rgba(255,255,255,.07);
+    white-space: nowrap;
+    user-select: text;
+  }
+  .desc-live .kw-tag .kw-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; cursor: pointer;
+    transition: transform .12s;
+  }
+  .desc-live .kw-tag .kw-dot:hover { transform: scale(1.4); }
+  .desc-live .kw-tag[data-kwcolor="default"] { color: #1a1008; background: rgba(160,170,184,.15); }
+  .desc-live .kw-tag[data-kwcolor="red"]     { color: #c53030; background: rgba(220,80,80,.12); }
+  .desc-live .kw-tag[data-kwcolor="orange"]  { color: #b85020; background: rgba(220,110,40,.12); }
+  .desc-live .kw-tag[data-kwcolor="yellow"]  { color: #8a6c00; background: rgba(210,175,0,.12); }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: .5rem; margin-top: .3rem; }
+  .btn {
+    flex: 1; padding: .55rem; border-radius: 6px; border: none;
+    font-family: 'Inter', sans-serif; font-size: .78rem; font-weight: 600;
+    letter-spacing: .02em; cursor: pointer; transition: all .15s;
+  }
+  .btn-primary { background: var(--gold); color: #0D0F14; }
+  .btn-primary:hover { background: #d9b85c; box-shadow: 0 0 16px rgba(201,168,76,.35); }
+  .btn-secondary { background: var(--surface2); border: 1px solid var(--border2); color: var(--text-dim); }
+  .btn-secondary:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: .2rem 0; }
+
+  /* ── Right panel ── */
+  .panel-right { display: flex; flex-direction: column; overflow-y: auto; }
+  .preview-section {
+    padding: 2rem; display: flex; flex-direction: column; align-items: center;
+    gap: 1.2rem; border-bottom: 1px solid var(--border);
+  }
+  .preview-section h2 { font-size: .7rem; font-weight: 600; letter-spacing: .08em; color: var(--text-dim); text-transform: uppercase; align-self: flex-start; }
+
+  /* ── THE CARD ── */
+  .card-wrap { perspective: 800px; }
+  .card {
+    width: 240px; height: 336px; border-radius: 12px; position: relative;
+    cursor: default; transition: transform .3s ease, box-shadow .3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,.7), 0 2px 8px rgba(0,0,0,.4);
+  }
+  .card:hover { transform: rotateY(-8deg) rotateX(4deg) scale(1.04); box-shadow: 12px 16px 48px rgba(0,0,0,.7); }
+  .card-frame {
+    position: absolute; inset: 0; border-radius: 12px;
+    border: 3px solid var(--card-frame-color, #555);
+    background: var(--card-bg); overflow: hidden; display: flex; flex-direction: column;
+  }
+  .card-frame::before {
+    content: ''; position: absolute; inset: 0; border-radius: 10px;
+    pointer-events: none; background: var(--card-shimmer, transparent); z-index: 10;
+  }
+  .energy-badge {
+    position: absolute; top: -10px; left: -10px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #333; border: 2px solid rgba(255,255,255,.25);
+    color: #fff; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 1.25rem;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 20; box-shadow: 0 2px 10px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.2);
+    text-shadow: 0 1px 3px rgba(0,0,0,.8); transition: background .2s;
+    font-style: normal;
+  }
+  .energy-badge.is-x { font-style: italic; font-size: 1.4rem; }
+  .card-art {
+    width: 100%; height: 136px; background: #c8baa0;
+    background-size: cover; background-position: center; position: relative; flex-shrink: 0;
+  }
+  .card-art-placeholder {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 4px; color: #8a7560; font-size: .7rem;
+    font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: .06em;
+    text-transform: uppercase; opacity: .5;
+  }
+  .card-art-placeholder svg { width: 28px; height: 28px; opacity: .6; margin-bottom: 2px; }
+  .card-name-band {
+    padding: 5px 12px 4px; background: rgba(0,0,0,.08);
+    border-top: 1px solid rgba(0,0,0,.12); border-bottom: 1px solid rgba(0,0,0,.12);
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .card-name {
+    font-family: 'Inter', sans-serif; font-weight: 700; font-size: .78rem;
+    color: var(--ink); letter-spacing: -.01em; flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-type-label {
+    font-family: 'Inter', sans-serif; font-size: .58rem; font-weight: 500;
+    letter-spacing: .06em; color: rgba(18,16,10,.5); text-transform: uppercase;
+    flex-shrink: 0; margin-left: 6px;
+  }
+  .card-desc-box {
+    flex: 1; margin: 6px 8px 8px; background: rgba(242,234,211,.6);
+    border: 1px solid rgba(0,0,0,.1); border-radius: 5px;
+    padding: 8px 10px; font-family: 'DM Sans', sans-serif; font-size: .73rem;
+    line-height: 1.5; color: var(--ink); overflow: hidden; position: relative;
+  }
+  .card-desc-box::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 18px;
+    background: linear-gradient(transparent, rgba(242,234,211,.85)); pointer-events: none;
+  }
+  /* keyword colors on the card */
+  .card-desc-box .kw          { font-weight: 700; color: var(--ink); }
+  .card-desc-box .kw-red      { font-weight: 700; color: #c53030; }
+  .card-desc-box .kw-orange   { font-weight: 700; color: #b85020; }
+  .card-desc-box .kw-yellow   { font-weight: 700; color: #8a6c00; }
+
+  /* ── Collection ── */
+  .collection-section { padding: 1.8rem 2rem; flex: 1; }
+  .collection-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.4rem; flex-wrap: wrap; }
+  .collection-header h2 { font-size: .7rem; font-weight: 600; letter-spacing: .08em; color: var(--text-dim); text-transform: uppercase; }
+  .collection-count { background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: .15rem .6rem; font-size: .72rem; color: var(--text-dim); font-weight: 500; }
+  .collection-actions { margin-left: auto; display: flex; gap: .4rem; }
+  .btn-sm {
+    padding: .3rem .75rem; font-size: .7rem; font-weight: 600; flex: none;
+    border-radius: 6px; border: 1px solid var(--border2); background: var(--surface2);
+    color: var(--text-dim); font-family: 'Inter', sans-serif; letter-spacing: .02em; cursor: pointer; transition: all .15s;
+  }
+  .btn-sm:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .btn-sm.gold { border-color: var(--gold-dim); color: var(--gold); }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 2rem 1.5rem; }
+  .card-thumb-wrap { display: flex; flex-direction: column; align-items: center; gap: .55rem; position: relative; }
+  .card-thumb {
+    width: 160px; height: 224px; border-radius: 8px; position: relative;
+    cursor: pointer; transition: transform .22s ease, box-shadow .22s ease;
+    box-shadow: 0 4px 18px rgba(0,0,0,.6); flex-shrink: 0;
+  }
+  .card-thumb:hover { transform: translateY(-6px) rotateY(-5deg); box-shadow: 6px 14px 30px rgba(0,0,0,.65); }
+  .card-thumb .card-frame { border-width: 2px; }
+  .card-thumb .energy-badge { width: 30px; height: 30px; font-size: .88rem; top: -7px; left: -7px; }
+  .card-thumb .energy-badge.is-x { font-size: 1rem; }
+  .card-thumb .card-art { height: 90px; }
+  .card-thumb .card-name-band { padding: 3px 8px; }
+  .card-thumb .card-name { font-size: .62rem; }
+  .card-thumb .card-type-label { font-size: .48rem; }
+  .card-thumb .card-desc-box { margin: 4px 5px 5px; padding: 5px 6px; font-size: .58rem; }
+  .thumb-actions { display: flex; gap: .35rem; opacity: 0; transition: opacity .15s; }
+  .card-thumb-wrap:hover .thumb-actions { opacity: 1; }
+  .thumb-btn {
+    border: 1px solid var(--border2); background: var(--surface); border-radius: 5px;
+    padding: .22rem .5rem; font-size: .65rem; font-family: 'Inter', sans-serif;
+    font-weight: 500; cursor: pointer; color: var(--text-dim); transition: all .13s;
+  }
+  .thumb-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .thumb-btn.del:hover { border-color: var(--crimson-l); color: var(--crimson-l); }
+  .empty-state { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-dim); font-size: .9rem; }
+  .empty-state strong { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .08em; color: var(--border2); margin-bottom: .4rem; text-transform: uppercase; }
+
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: var(--gold); color: #0D0F14;
+    font-family: 'Inter', sans-serif; font-size: .78rem; font-weight: 600;
+    padding: .55rem 1.2rem; border-radius: 100px;
+    box-shadow: 0 4px 20px rgba(201,168,76,.35);
+    opacity: 0; transition: all .25s ease; pointer-events: none; white-space: nowrap; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+  @media (max-width: 860px) {
+    main { grid-template-columns: 1fr; }
+    .panel-form { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Kenosis <span>Game Planner</span></h1>
+  <p>Card Builder</p>
+</header>
+
+<main>
+  <!-- FORM PANEL -->
+  <div class="panel-form">
+    <h2 id="form-title">New Card</h2>
+
+    <div class="field">
+      <label>Card Name</label>
+      <input type="text" id="f-name" placeholder="e.g. Strike" maxlength="32">
+    </div>
+
+    <div class="field">
+      <label>Energy Cost</label>
+      <div class="cost-picker" id="cost-picker">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Card Type</label>
+      <select id="f-type">
+        <option>Attack</option>
+        <option>Skill</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Rarity</label>
+      <div class="rarity-group">
+        <button class="rarity-btn active" data-rarity="Common">Common</button>
+        <button class="rarity-btn" data-rarity="Uncommon">Uncommon</button>
+        <button class="rarity-btn" data-rarity="Rare">Rare</button>
+        <button class="rarity-btn" data-rarity="Legendary">Legendary</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Card Color</label>
+      <div class="color-swatches" id="color-swatches"></div>
+    </div>
+
+    <div class="field">
+      <label>Artwork</label>
+      <div class="art-upload">
+        <span id="art-upload-label">↑ Click to upload artwork</span>
+        <input type="file" id="f-art" accept="image/*">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Card Text</label>
+      <div class="desc-editor-wrap">
+        <div class="desc-toolbar">
+          <span class="desc-toolbar-label">Bold color:</span>
+          <button class="kw-color-btn active" data-kwcolor="default">
+            <span class="dot" style="background:#a0aab8"></span> Default
+          </button>
+          <button class="kw-color-btn" data-kwcolor="red">
+            <span class="dot" style="background:#e05555"></span> Red
+          </button>
+          <button class="kw-color-btn" data-kwcolor="orange">
+            <span class="dot" style="background:#e07030"></span> Orange
+          </button>
+          <button class="kw-color-btn" data-kwcolor="yellow">
+            <span class="dot" style="background:#d4b832"></span> Yellow
+          </button>
+        </div>
+        <div class="desc-live" id="desc-live" contenteditable="true" spellcheck="false"
+             data-placeholder="Type card text… Select a word and press * to make it bold, then click its dot to change color."></div>
+      </div>
+      <div class="desc-hint">
+        Select text → press <code>*</code> to toggle bold keyword · Click the <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#a0aab8;vertical-align:middle"></span> dot to cycle color · Backspace removes tags normally
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveCard()">+ Save Card</button>
+      <button class="btn btn-secondary" onclick="resetForm()">↺ Reset</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="exportCards()">↓ Export JSON</button>
+      <button class="btn btn-secondary" id="import-btn">↑ Import JSON</button>
+      <input type="file" id="import-file" accept=".json" style="display:none">
+    </div>
+  </div>
+
+  <!-- PREVIEW + COLLECTION -->
+  <div class="panel-right">
+    <div class="preview-section">
+      <h2>Live Preview</h2>
+      <div class="card-wrap">
+        <div class="card" id="preview-card">
+          <div class="card-frame" id="preview-frame">
+            <div class="energy-badge" id="preview-cost">1</div>
+            <div class="card-art" id="preview-art">
+              <div class="card-art-placeholder" id="art-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                Artwork
+              </div>
+            </div>
+            <div class="card-name-band" id="preview-name-band">
+              <div class="card-name" id="preview-name">New Card</div>
+              <div class="card-type-label" id="preview-type">Attack</div>
+            </div>
+            <div class="card-desc-box" id="preview-desc"><span style="opacity:.4;font-style:italic">Card text will appear here…</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="collection-section">
+      <div class="collection-header">
+        <h2>Collection</h2>
+        <span class="collection-count" id="card-count">0 cards</span>
+        <div class="collection-actions">
+          <button class="btn-sm gold" onclick="exportCards()">Export</button>
+          <button class="btn-sm" onclick="document.getElementById('import-file').click()">Import</button>
+        </div>
+      </div>
+      <div class="card-grid" id="card-grid">
+        <div class="empty-state">
+          <strong>No Cards Yet</strong>
+          Build your first card and save it to start your collection.
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════
+   PALETTE
+════════════════════════════════════════════ */
+const COLORS = [
+  { id:'crimson',  hex:'#C0392B', frame:'#7A1A1A', badge:'#8B2222', band:'rgba(122,26,26,.13)' },
+  { id:'amber',    hex:'#D4820A', frame:'#7A4A08', badge:'#8B5010', band:'rgba(122,74,8,.12)'  },
+  { id:'gold',     hex:'#C9A84C', frame:'#7A6010', badge:'#8B7010', band:'rgba(122,96,16,.12)' },
+  { id:'lime',     hex:'#5B9E2A', frame:'#2A5C10', badge:'#326B18', band:'rgba(42,92,16,.12)'  },
+  { id:'teal',     hex:'#1A9A7A', frame:'#0A5A48', badge:'#126655', band:'rgba(10,90,72,.12)'  },
+  { id:'sky',      hex:'#2A7EC0', frame:'#10407A', badge:'#1A4E8B', band:'rgba(16,64,122,.12)' },
+  { id:'indigo',   hex:'#5A3CC0', frame:'#2A1878', badge:'#38228B', band:'rgba(42,24,120,.12)' },
+  { id:'violet',   hex:'#8B2EB0', frame:'#4A1065', badge:'#601878', band:'rgba(74,16,101,.12)' },
+  { id:'slate',    hex:'#607080', frame:'#3A4A58', badge:'#485860', band:'rgba(58,74,88,.1)'   },
+  { id:'obsidian', hex:'#2A2A3A', frame:'#18181E', badge:'#222230', band:'rgba(24,24,30,.18)'  },
+];
+
+const rarityShimmer = {
+  Common:    'none',
+  Uncommon:  'repeating-linear-gradient(105deg,transparent,transparent 60px,rgba(160,190,220,.1) 62px,transparent 64px)',
+  Rare:      'repeating-linear-gradient(105deg,transparent,transparent 40px,rgba(160,140,255,.12) 42px,transparent 44px)',
+  Legendary: 'repeating-linear-gradient(105deg,transparent,transparent 20px,rgba(201,168,76,.16) 22px,transparent 24px)',
+};
+
+const KW_COLORS = ['default','red','orange','yellow'];
+const KW_COLOR_HEX = { default:'#a0aab8', red:'#e05555', orange:'#e07030', yellow:'#d4b832' };
+
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let cards = [];
+let editingId       = null;
+let currentArtDataUrl = null;
+let currentRarity   = 'Common';
+let currentColorId  = 'crimson';
+let currentCost     = '1';          // '0'..'9', 'X', or any string for custom
+let activeKwColor   = 'default';
+
+/* ════════════════════════════════════════════
+   ENERGY COST PICKER
+════════════════════════════════════════════ */
+function buildCostPicker() {
+  const container = document.getElementById('cost-picker');
+  container.innerHTML = '';
+
+  // 0–9
+  for (let i = 0; i <= 9; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'cost-btn' + (String(i) === currentCost ? ' active' : '');
+    btn.textContent = i;
+    btn.dataset.val = String(i);
+    btn.addEventListener('click', () => selectCost(String(i)));
+    container.appendChild(btn);
+  }
+
+  // X
+  const xBtn = document.createElement('button');
+  xBtn.className = 'cost-btn x-btn' + (currentCost === 'X' ? ' active' : '');
+  xBtn.textContent = 'X';
+  xBtn.dataset.val = 'X';
+  xBtn.addEventListener('click', () => selectCost('X'));
+  container.appendChild(xBtn);
+
+  // Custom number input
+  const customWrap = document.createElement('div');
+  customWrap.className = 'cost-custom-wrap';
+  const isCustom = !['X','0','1','2','3','4','5','6','7','8','9'].includes(currentCost);
+  customWrap.innerHTML = `<span>or</span><input type="number" id="cost-custom" min="10" max="99" placeholder="10+" value="${isCustom ? currentCost : ''}" class="${isCustom ? 'active' : ''}">`;
+  container.appendChild(customWrap);
+
+  document.getElementById('cost-custom').addEventListener('input', e => {
+    const v = e.target.value.trim();
+    if (v !== '') {
+      currentCost = v;
+      // deactivate preset buttons
+      container.querySelectorAll('.cost-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      updatePreview();
+    }
+  });
+}
+
+function selectCost(val) {
+  currentCost = val;
+  buildCostPicker();
+  updatePreview();
+}
+
+/* ════════════════════════════════════════════
+   COLOR SWATCHES
+════════════════════════════════════════════ */
+function buildSwatches() {
+  const container = document.getElementById('color-swatches');
+  container.innerHTML = '';
+  COLORS.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'swatch' + (c.id === currentColorId ? ' active' : '');
+    el.style.background = c.hex;
+    el.title = c.id.charAt(0).toUpperCase() + c.id.slice(1);
+    el.dataset.colorId = c.id;
+    el.addEventListener('click', () => {
+      currentColorId = c.id;
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      updatePreview();
+    });
+    container.appendChild(el);
+  });
+}
+
+/* ════════════════════════════════════════════
+   KEYWORD COLOR TOOLBAR
+════════════════════════════════════════════ */
+document.querySelectorAll('.kw-color-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeKwColor = btn.dataset.kwcolor;
+    document.querySelectorAll('.kw-color-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+/* ════════════════════════════════════════════
+   RICH KEYWORD EDITOR
+   Format stored as plain text: *word|color* or *word* (default)
+   The contenteditable div shows styled <span class="kw-tag"> nodes.
+════════════════════════════════════════════ */
+const descLive = document.getElementById('desc-live');
+
+// Parse raw storage string → array of tokens: { type:'text'|'kw', text, color }
+function parseDesc(raw) {
+  const tokens = [];
+  const re = /\*([^*]+?)\|?(default|red|orange|yellow)?\*/g;
+  let last = 0, m;
+  while ((m = re.exec(raw)) !== null) {
+    if (m.index > last) tokens.push({ type:'text', text: raw.slice(last, m.index) });
+    tokens.push({ type:'kw', text: m[1], color: m[2] || 'default' });
+    last = re.lastIndex;
+  }
+  if (last < raw.length) tokens.push({ type:'text', text: raw.slice(last) });
+  return tokens;
+}
+
+// Tokens → storage string
+function tokensToRaw(tokens) {
+  return tokens.map(t => t.type === 'kw'
+    ? `*${t.text}|${t.color}*`
+    : t.text
+  ).join('');
+}
+
+// Tokens → card HTML
+function tokensToCardHTML(tokens) {
+  return tokens.map(t => {
+    if (t.type === 'text') return t.text.replace(/\n/g, '<br>');
+    const cls = t.color === 'default' ? 'kw' : `kw-${t.color}`;
+    return `<span class="${cls}">${escHtml(t.text)}</span>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Build a kw-tag span element
+function makeKwTag(text, color) {
+  const span = document.createElement('span');
+  span.className = 'kw-tag';
+  span.dataset.kwcolor = color;
+  span.contentEditable = 'false';
+
+  const dot = document.createElement('span');
+  dot.className = 'kw-dot';
+  dot.style.background = KW_COLOR_HEX[color] || KW_COLOR_HEX.default;
+  dot.title = 'Click to cycle color';
+  dot.addEventListener('click', e => {
+    e.stopPropagation();
+    const cur = span.dataset.kwcolor;
+    const next = KW_COLORS[(KW_COLORS.indexOf(cur) + 1) % KW_COLORS.length];
+    span.dataset.kwcolor = next;
+    dot.style.background = KW_COLOR_HEX[next];
+    updatePreview();
+  });
+
+  const label = document.createElement('span');
+  label.textContent = text;
+
+  span.appendChild(dot);
+  span.appendChild(label);
+  return span;
+}
+
+// Read the editor DOM → raw storage string
+function editorToRaw() {
+  let raw = '';
+  descLive.childNodes.forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      raw += node.textContent;
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      if (node.classList.contains('kw-tag')) {
+        const text  = node.querySelector('span:last-child')?.textContent || '';
+        const color = node.dataset.kwcolor || 'default';
+        raw += `*${text}|${color}*`;
+      } else if (node.tagName === 'BR') {
+        raw += '\n';
+      } else {
+        raw += node.innerText || node.textContent;
+      }
+    }
+  });
+  return raw;
+}
+
+// Populate editor from raw string
+function editorFromRaw(raw) {
+  descLive.innerHTML = '';
+  const tokens = parseDesc(raw);
+  tokens.forEach(t => {
+    if (t.type === 'text') {
+      t.text.split('\n').forEach((line, i) => {
+        if (i > 0) descLive.appendChild(document.createElement('br'));
+        if (line) descLive.appendChild(document.createTextNode(line));
+      });
+    } else {
+      descLive.appendChild(makeKwTag(t.text, t.color));
+    }
+  });
+}
+
+// Key handler: pressing * while text is selected → wrap as keyword
+descLive.addEventListener('keydown', e => {
+  if (e.key !== '*') return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+  // Only act if selection is within descLive
+  if (!descLive.contains(range.commonAncestorContainer)) return;
+  e.preventDefault();
+
+  const text = range.toString().trim();
+  if (!text) return;
+  range.deleteContents();
+  const tag = makeKwTag(text, activeKwColor);
+  range.insertNode(tag);
+  // Move cursor after the tag
+  const newRange = document.createRange();
+  newRange.setStartAfter(tag);
+  newRange.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
+  updatePreview();
+});
+
+descLive.addEventListener('input', updatePreview);
+
+// Placeholder behaviour
+descLive.addEventListener('focus', () => descLive.classList.remove('empty'));
+descLive.addEventListener('blur', () => {
+  if (!descLive.textContent.trim() && !descLive.querySelector('.kw-tag')) {
+    descLive.classList.add('empty');
+  }
+});
+
+/* ════════════════════════════════════════════
+   UTIL
+════════════════════════════════════════════ */
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function getColor(id) { return COLORS.find(c => c.id === id) || COLORS[0]; }
+
+/* ════════════════════════════════════════════
+   THEME
+════════════════════════════════════════════ */
+function applyTheme(frameEl, colorId, rarity) {
+  const c = getColor(colorId);
+  frameEl.style.setProperty('--card-frame-color', c.frame);
+  frameEl.style.setProperty('--card-shimmer', rarityShimmer[rarity] || 'none');
+  const badge = frameEl.querySelector('.energy-badge');
+  if (badge) badge.style.background = c.badge;
+  const band = frameEl.querySelector('.card-name-band');
+  if (band) band.style.background = c.band;
+}
+
+/* ════════════════════════════════════════════
+   LIVE PREVIEW
+════════════════════════════════════════════ */
+function updatePreview() {
+  const name = document.getElementById('f-name').value.trim() || 'New Card';
+  const type = document.getElementById('f-type').value;
+  const raw  = editorToRaw();
+
+  document.getElementById('preview-name').textContent = name;
+  document.getElementById('preview-type').textContent = type;
+
+  const badgeEl = document.getElementById('preview-cost');
+  badgeEl.textContent = currentCost;
+  badgeEl.className = 'energy-badge' + (currentCost === 'X' ? ' is-x' : '');
+
+  const tokens = parseDesc(raw);
+  const html = tokensToCardHTML(tokens);
+  document.getElementById('preview-desc').innerHTML = html || '<span style="opacity:.4;font-style:italic">Card text will appear here…</span>';
+
+  const artEl = document.getElementById('preview-art');
+  const placeholder = document.getElementById('art-placeholder');
+  if (currentArtDataUrl) {
+    artEl.style.backgroundImage = `url(${currentArtDataUrl})`;
+    placeholder.style.display = 'none';
+  } else {
+    artEl.style.backgroundImage = 'none';
+    placeholder.style.display = 'flex';
+  }
+
+  applyTheme(document.getElementById('preview-frame'), currentColorId, currentRarity);
+}
+
+/* ════════════════════════════════════════════
+   RARITY
+════════════════════════════════════════════ */
+document.querySelectorAll('.rarity-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.rarity-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentRarity = btn.dataset.rarity;
+    updatePreview();
+  });
+});
+
+/* ════════════════════════════════════════════
+   NAME / TYPE
+════════════════════════════════════════════ */
+['f-name','f-type'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updatePreview);
+});
+
+/* ════════════════════════════════════════════
+   ART UPLOAD
+════════════════════════════════════════════ */
+document.getElementById('f-art').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    currentArtDataUrl = ev.target.result;
+    document.getElementById('art-upload-label').textContent = '✓ ' + file.name;
+    updatePreview();
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ════════════════════════════════════════════
+   SAVE / RESET
+════════════════════════════════════════════ */
+function getFormData() {
+  return {
+    id:      editingId || uid(),
+    name:    document.getElementById('f-name').value.trim() || 'Unnamed',
+    cost:    currentCost,
+    type:    document.getElementById('f-type').value,
+    rarity:  currentRarity,
+    colorId: currentColorId,
+    desc:    editorToRaw(),
+    art:     currentArtDataUrl || null,
+  };
+}
+
+function saveCard() {
+  const card = getFormData();
+  if (editingId) {
+    const idx = cards.findIndex(c => c.id === editingId);
+    if (idx !== -1) cards[idx] = card;
+    editingId = null;
+    document.getElementById('form-title').textContent = 'New Card';
+  } else {
+    cards.push(card);
+  }
+  persistCards(); renderGrid(); toast('Card saved!');
+}
+
+function resetForm() {
+  editingId = null;
+  document.getElementById('form-title').textContent = 'New Card';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-type').value = 'Attack';
+  document.getElementById('f-art').value = '';
+  document.getElementById('art-upload-label').textContent = '↑ Click to upload artwork';
+  descLive.innerHTML = '';
+  currentArtDataUrl = null;
+  currentRarity = 'Common';
+  currentColorId = 'crimson';
+  currentCost = '1';
+  activeKwColor = 'default';
+  document.querySelectorAll('.rarity-btn').forEach(b => b.classList.toggle('active', b.dataset.rarity === 'Common'));
+  document.querySelectorAll('.kw-color-btn').forEach(b => b.classList.toggle('active', b.dataset.kwcolor === 'default'));
+  buildSwatches();
+  buildCostPicker();
+  updatePreview();
+}
+
+/* ════════════════════════════════════════════
+   BUILD CARD DOM
+════════════════════════════════════════════ */
+function buildCardDOM(card, isThumb) {
+  const c = getColor(card.colorId || 'crimson');
+  const shimmer = rarityShimmer[card.rarity] || 'none';
+  const tokens = parseDesc(card.desc || '');
+  const descHtml = tokensToCardHTML(tokens);
+
+  const el = document.createElement('div');
+  el.className = isThumb ? 'card card-thumb' : 'card';
+  el.innerHTML = `
+    <div class="card-frame" style="--card-frame-color:${c.frame};--card-shimmer:${shimmer};">
+      <div class="energy-badge${card.cost === 'X' ? ' is-x' : ''}" style="background:${c.badge}">${escHtml(String(card.cost))}</div>
+      <div class="card-art" style="${card.art ? `background-image:url(${card.art})` : ''}">
+        ${!card.art ? `<div class="card-art-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>Artwork</div>` : ''}
+      </div>
+      <div class="card-name-band" style="background:${c.band}">
+        <div class="card-name">${escHtml(card.name)}</div>
+        <div class="card-type-label">${escHtml(card.type)}</div>
+      </div>
+      <div class="card-desc-box">${descHtml || '<span style="opacity:.35;font-style:italic">No description</span>'}</div>
+    </div>`;
+  return el;
+}
+
+/* ════════════════════════════════════════════
+   GRID
+════════════════════════════════════════════ */
+function renderGrid() {
+  const grid = document.getElementById('card-grid');
+  document.getElementById('card-count').textContent = cards.length + ' card' + (cards.length !== 1 ? 's' : '');
+  grid.innerHTML = '';
+  if (!cards.length) {
+    grid.innerHTML = `<div class="empty-state"><strong>No Cards Yet</strong>Build your first card and save it to start your collection.</div>`;
+    return;
+  }
+  cards.forEach(card => {
+    const wrap = document.createElement('div');
+    wrap.className = 'card-thumb-wrap';
+    const mini = buildCardDOM(card, true);
+    mini.title = card.name;
+    mini.addEventListener('click', () => editCard(card.id));
+    const actions = document.createElement('div');
+    actions.className = 'thumb-actions';
+    actions.innerHTML = `<button class="thumb-btn" onclick="editCard('${card.id}')">Edit</button><button class="thumb-btn del" onclick="deleteCard('${card.id}')">✕</button>`;
+    wrap.appendChild(mini);
+    wrap.appendChild(actions);
+    grid.appendChild(wrap);
+  });
+}
+
+/* ════════════════════════════════════════════
+   EDIT / DELETE
+════════════════════════════════════════════ */
+function editCard(id) {
+  const card = cards.find(c => c.id === id);
+  if (!card) return;
+  editingId = id;
+  document.getElementById('form-title').textContent = 'Editing';
+  document.getElementById('f-name').value = card.name;
+  document.getElementById('f-type').value = card.type;
+  currentArtDataUrl = card.art;
+  currentRarity = card.rarity;
+  currentColorId = card.colorId || 'crimson';
+  currentCost = String(card.cost || '1');
+  document.querySelectorAll('.rarity-btn').forEach(b => b.classList.toggle('active', b.dataset.rarity === card.rarity));
+  document.getElementById('art-upload-label').textContent = card.art ? '✓ Artwork loaded' : '↑ Click to upload artwork';
+  editorFromRaw(card.desc || '');
+  buildSwatches();
+  buildCostPicker();
+  updatePreview();
+  document.querySelector('.panel-form').scrollTop = 0;
+}
+
+function deleteCard(id) {
+  cards = cards.filter(c => c.id !== id);
+  if (editingId === id) resetForm();
+  persistCards(); renderGrid(); toast('Card removed.');
+}
+
+/* ════════════════════════════════════════════
+   PERSIST
+════════════════════════════════════════════ */
+function persistCards() {
+  try { localStorage.setItem('kenosis_cards', JSON.stringify(cards)); } catch(e) {}
+}
+function loadCards() {
+  try {
+    const raw = localStorage.getItem('kenosis_cards')
+             || localStorage.getItem('cardforge_cards'); // migrate old key
+    if (raw) {
+      cards = JSON.parse(raw);
+      cards = cards.map(c => {
+        if (!c.colorId && c.faction) {
+          const map = { fire:'crimson', water:'sky', nature:'lime', shadow:'indigo', light:'gold', neutral:'slate' };
+          c.colorId = map[c.faction] || 'crimson';
+        }
+        // migrate old plain *word* to *word|default*
+        if (c.desc) c.desc = c.desc.replace(/\*([^*|]+)\*/g, '*$1|default*');
+        return c;
+      });
+    }
+  } catch(e) { cards = []; }
+}
+
+/* ════════════════════════════════════════════
+   EXPORT / IMPORT
+════════════════════════════════════════════ */
+function exportCards() {
+  const blob = new Blob([JSON.stringify(cards, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'kenosis-collection.json'; a.click();
+  toast('Collection exported!');
+}
+document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-file').click());
+document.getElementById('import-file').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (Array.isArray(imported)) {
+        cards = imported; persistCards(); renderGrid();
+        toast(`Imported ${imported.length} card(s)!`);
+      } else { toast('Invalid file.'); }
+    } catch { toast('Could not parse file.'); }
+  };
+  reader.readAsText(file); e.target.value = '';
+});
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+loadCards();
+buildSwatches();
+buildCostPicker();
+renderGrid();
+updatePreview();
+</script>
+</body>
+</html>
