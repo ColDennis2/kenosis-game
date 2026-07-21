@@ -3,33 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kenosis — Card Creator</title>
+  <title>Kenosis — Card Forge</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --gold:            #C9A84C;
-      --gold-dim:        #8A6E2F;
-      --gold-glow:       rgba(201,168,76,0.1);
-      --ink:             #0D0F14;
-      --surface:         #13161D;
-      --surface2:        #1A1E28;
-      --panel:           #13161D;
-      --border:          #252B38;
-      --border2:         #313848;
-      --border-rune:     #252B38;
-      --border-bright:   rgba(201,168,76,0.5);
-      --text-main:       #C8D0DC;
-      --text-muted:      #5C6880;
-      --text-dim:        #3d4558;
-      --error:           #C04444;
-      --radius-sm:       6px;
+      --gold:            #c9a84c;
+      --gold-dim:        #8a6e2f;
+      --gold-glow:       rgba(201,168,76,0.18);
+      --ink:             #0d0b07;
+      --parchment:       #1a1610;
+      --panel:           #13100c;
+      --border-rune:     rgba(201,168,76,0.25);
+      --border-bright:   rgba(201,168,76,0.6);
+      --text-main:       #e8dfc8;
+      --text-muted:      #8a7d62;
+      --text-dim:        #5a5040;
+      --error:           #c04040;
+      --radius-sm:       4px;
       --radius:          8px;
-      --radius-lg:       12px;
-      --transition:      0.15s ease;
+      --radius-lg:       14px;
+      --transition:      0.2s ease;
     }
 
     html, body {
@@ -61,7 +58,7 @@
       padding: 2rem;
       background:
         radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 70%),
-        linear-gradient(180deg, #0D0F14 0%, #0a0d11 100%);
+        linear-gradient(180deg, #0d0b07 0%, #110e09 100%);
     }
 
     .home-grid {
@@ -151,21 +148,23 @@
       align-items: center;
       justify-content: center;
       padding: 2rem;
-      background: var(--ink);
+      background:
+        radial-gradient(ellipse 50% 40% at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 65%),
+        #0d0b07;
     }
 
     .auth-panel {
       width: 100%; max-width: 400px;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--panel);
+      border: 1px solid var(--border-rune);
       border-radius: var(--radius-lg);
       padding: 2.25rem 2rem;
       position: relative;
     }
     .auth-panel::before {
       content: '';
-      position: absolute; top: -1px; left: 20%; right: 20%; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
+      position: absolute; top: -1px; left: 20%; right: 20%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
       border-radius: 99px;
     }
 
@@ -203,11 +202,10 @@
     /* Tabs */
     .auth-tabs {
       display: flex;
-      border: 1px solid var(--border2);
+      border: 1px solid var(--border-rune);
       border-radius: var(--radius-sm);
       overflow: hidden;
       margin-bottom: 1.5rem;
-      background: var(--surface2);
     }
     .auth-tab {
       flex: 1; padding: 0.52rem;
@@ -219,7 +217,7 @@
       cursor: pointer; transition: var(--transition);
     }
     .auth-tab.active {
-      background: var(--surface);
+      background: var(--gold-glow);
       color: var(--gold);
       box-shadow: inset 0 -2px 0 var(--gold);
     }
@@ -234,23 +232,23 @@
     label.form-label {
       font-size: 0.7rem; font-weight: 500;
       color: var(--text-muted);
-      letter-spacing: 0.04em; text-transform: uppercase;
+      letter-spacing: 0.12em; text-transform: uppercase;
     }
 
     input.form-input {
-      width: 100%; padding: 0.5rem 0.7rem;
-      background: var(--ink);
-      border: 1px solid var(--border2);
+      width: 100%; padding: 0.68rem 0.85rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-rune);
       border-radius: var(--radius-sm);
       color: var(--text-main);
-      font-family: 'Inter', sans-serif; font-size: 0.875rem;
-      outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: 'Inter', sans-serif; font-size: 0.88rem;
+      outline: none; transition: var(--transition);
     }
     input.form-input:focus {
-      border-color: var(--gold);
+      border-color: var(--gold-dim);
       box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
     }
-    input.form-input::placeholder { color: var(--text-muted); }
+    input.form-input::placeholder { color: var(--text-dim); }
     input.form-input.invalid { border-color: var(--error); }
 
     .form-error {
@@ -269,54 +267,54 @@
 
     /* Buttons */
     .btn-primary {
-      width: 100%; padding: 0.55rem;
-      background: var(--gold); color: #0D0F14;
+      width: 100%; padding: 0.82rem;
+      background: var(--gold); color: #0d0b07;
       border: none; border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.78rem; font-weight: 600;
-      letter-spacing: 0.02em;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
       cursor: pointer; transition: var(--transition);
     }
-    .btn-primary:hover:not(:disabled) { background: #d9b85c; box-shadow: 0 0 16px rgba(201,168,76,0.35); }
+    .btn-primary:hover:not(:disabled) { background: #ddb85a; transform: translateY(-1px); }
     .btn-primary:disabled { opacity: 0.6; cursor: default; }
 
     .btn-outline {
-      width: 100%; padding: 0.55rem;
-      background: var(--surface2); color: var(--text-muted);
-      border: 1px solid var(--border2);
+      width: 100%; padding: 0.82rem;
+      background: transparent; color: var(--gold);
+      border: 1px solid var(--border-bright);
       border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.78rem; font-weight: 600;
-      letter-spacing: 0.02em;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
       cursor: pointer; transition: var(--transition);
     }
-    .btn-outline:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .btn-outline:hover { background: var(--gold-glow); border-color: var(--gold); }
 
     .btn-ghost {
       width: 100%; background: none; border: none; padding: 0.5rem;
-      color: var(--text-muted); font-size: 0.75rem;
-      letter-spacing: 0.02em; cursor: pointer;
+      color: var(--text-muted); font-size: 0.78rem;
+      letter-spacing: 0.04em; cursor: pointer;
       transition: var(--transition);
     }
     .btn-ghost:hover { color: var(--text-main); }
 
     .btn-dashed {
-      width: 100%; padding: 0.55rem;
+      width: 100%; padding: 0.62rem;
       background: transparent; color: var(--text-muted);
-      border: 1px solid var(--border);
+      border: 1px dashed rgba(201,168,76,0.2);
       border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.75rem; font-weight: 500;
-      letter-spacing: 0.02em;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
       cursor: pointer; transition: var(--transition);
     }
-    .btn-dashed:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .btn-dashed:hover { border-color: var(--border-bright); color: var(--text-main); }
 
     .auth-divider {
       display: flex; align-items: center; gap: 0.7rem;
     }
-    .divider-line { flex: 1; height: 1px; background: var(--border); }
-    .divider-text { font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.06em; }
+    .divider-line { flex: 1; height: 1px; background: var(--border-rune); }
+    .divider-text { font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.1em; }
 
     /* Loading spinner */
     .spinner {
@@ -331,16 +329,15 @@
 
     /* Toast */
     #toast {
-      position: fixed; bottom: 2rem; left: 50%;
+      position: fixed; bottom: 1.5rem; left: 50%;
       transform: translateX(-50%) translateY(12px);
-      background: var(--gold);
-      color: #0D0F14;
+      background: var(--panel);
+      border: 1px solid var(--border-bright);
+      color: var(--text-main);
       padding: 0.55rem 1.2rem;
-      border-radius: 100px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.78rem; font-weight: 600;
-      box-shadow: 0 4px 20px rgba(201,168,76,0.35);
-      opacity: 0; transition: all 0.25s ease;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem; letter-spacing: 0.04em;
+      opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease;
       z-index: 999; white-space: nowrap; pointer-events: none;
     }
     #toast.show {
@@ -364,11 +361,11 @@
   </div>
 
   <h1 class="home-title">Kenosis</h1>
-  <p class="home-sub">Card Creator</p>
+  <p class="home-sub">Card Forge</p>
   <div class="home-divider"></div>
 
   <div class="home-actions">
-    <button class="btn-primary"  onclick="showAuth('login')"   >Enter Card Creator</button>
+    <button class="btn-primary"  onclick="showAuth('login')"   >Enter the Forge</button>
     <button class="btn-outline"  onclick="showAuth('register')">Create Account</button>
     <button class="btn-ghost"    onclick="guestEnter()"        >Continue as Guest</button>
   </div>
@@ -416,7 +413,7 @@
       <div class="form-field">
         <label class="form-label" for="loginEmail">Email</label>
         <input class="form-input" id="loginEmail" type="email"
-               placeholder="card@kenosis.gg" autocomplete="email" />
+               placeholder="forge@kenosis.gg" autocomplete="email" />
         <span class="form-error" id="loginEmailErr">Enter a valid email address</span>
       </div>
 
@@ -430,7 +427,7 @@
         </button>
       </div>
 
-      <button type="submit" class="btn-primary" id="loginBtn">Enter Card Creator</button>
+      <button type="submit" class="btn-primary" id="loginBtn">Enter the Forge</button>
 
       <div class="auth-divider">
         <div class="divider-line"></div>
@@ -455,7 +452,7 @@
       <div class="form-field">
         <label class="form-label" for="regEmail">Email</label>
         <input class="form-input" id="regEmail" type="email"
-               placeholder="card@kenosis.com" autocomplete="email" />
+               placeholder="forge@kenosis.gg" autocomplete="email" />
         <span class="form-error" id="regEmailErr">Enter a valid email address</span>
       </div>
 
@@ -490,15 +487,24 @@
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
-  /* ── Storage helpers ── */
-  const USERS_KEY   = 'kenosis_users';
-  const SESSION_KEY = 'kenosis_session';
+<script>
+  /* ── Supabase ── */
+  const SB_URL = 'https://efprarpfgwiihrbwgxhz.supabase.co';
+  const SB_KEY = 'sb_publishable_xx51FbZeklVxb8subL8fNQ_gVMQogIl';
 
-  function loadUsers()  { return JSON.parse(localStorage.getItem(USERS_KEY)  || '[]'); }
-  function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+  function sbHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Prefer': 'return=representation'
+    };
+  }
+
+  /* ── Session ── */
+  const SESSION_KEY = 'kenosis_session';
   function loadSession(){ return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); }
   function saveSession(u){ sessionStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
-  function clearSession(){ sessionStorage.removeItem(SESSION_KEY); }
 
   /* ── Screen routing ── */
   function show(id) {
@@ -541,7 +547,7 @@
   function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
   /* ── Login ── */
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
     clearErrors();
 
@@ -559,24 +565,30 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Entering…';
 
-    setTimeout(() => {
-      const users = loadUsers();
-      const user  = users.find(u => u.email === email && u.password === pass);
-
-      if (!user) {
+    try {
+      const res = await fetch(
+        `${SB_URL}/rest/v1/users?email=eq.${encodeURIComponent(email)}&password=eq.${encodeURIComponent(pass)}&select=id,name,email`,
+        { headers: sbHeaders() }
+      );
+      const rows = await res.json();
+      if (!rows.length) {
         btn.disabled = false;
-        btn.textContent = 'Enter Card Creator';
+        btn.textContent = 'Enter the Forge';
         fieldError('loginPassErr', 'loginPass', 'Incorrect email or password');
         return;
       }
-
+      const user = { ...rows[0], guest: false };
       saveSession(user);
       enterForge(user);
-    }, 800);
+    } catch(err) {
+      btn.disabled = false;
+      btn.textContent = 'Enter the Forge';
+      fieldError('loginPassErr', 'loginPass', 'Connection error — try again');
+    }
   }
 
   /* ── Register ── */
-  function handleRegister(e) {
+  async function handleRegister(e) {
     e.preventDefault();
     clearErrors();
 
@@ -592,36 +604,55 @@
     if (pass !== confirm)  ok = fieldError('regPassConfirmErr', 'regPassConfirm', "Passwords don't match") && ok;
     if (!ok) return;
 
-    const users = loadUsers();
-    if (users.find(u => u.email === email)) {
-      fieldError('regEmailErr', 'regEmail', 'This email is already registered');
-      return;
-    }
-
     const btn = document.getElementById('registerBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Creating account…';
 
-    setTimeout(() => {
-      const user = { name, email, password: pass, guest: false };
-      users.push(user);
-      saveUsers(users);
+    try {
+      // Check email not already taken
+      const check = await fetch(
+        `${SB_URL}/rest/v1/users?email=eq.${encodeURIComponent(email)}&select=id`,
+        { headers: sbHeaders() }
+      );
+      const existing = await check.json();
+      if (existing.length) {
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+        fieldError('regEmailErr', 'regEmail', 'This email is already registered');
+        return;
+      }
+
+      // Insert new user
+      const res = await fetch(`${SB_URL}/rest/v1/users`, {
+        method: 'POST',
+        headers: sbHeaders(),
+        body: JSON.stringify({ name, email, password: pass })
+      });
+      const rows = await res.json();
+      const user = { ...rows[0], guest: false };
       saveSession(user);
-      toast('Welcome to the Card Creator, ' + name + '!');
+      toast('Welcome to the Forge, ' + name + '!');
       enterForge(user);
-    }, 900);
+    } catch(err) {
+      btn.disabled = false;
+      btn.textContent = 'Create Account';
+      fieldError('regEmailErr', 'regEmail', 'Connection error — try again');
+    }
   }
 
+  /* ── Guest ── */
   function guestEnter() {
     const user = { name: 'Guest', email: null, guest: true };
     saveSession(user);
     enterForge(user);
   }
 
+  /* ── Enter the app ── */
   function enterForge(user) {
     window.location.href = './card-forge.html';
   }
 
+  /* ── Toast ── */
   let _toastTimer;
   function toast(msg) {
     const el = document.getElementById('toast');
@@ -631,11 +662,10 @@
     _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
   }
 
+  /* ── Auto-restore session ── */
   (function init() {
     const session = loadSession();
-    if (session) {
-      enterForge(session);
-    }
+    if (session) enterForge(session);
   })();
 </script>
 </body>
