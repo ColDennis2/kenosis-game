@@ -6,27 +6,30 @@
   <title>Kenosis — Card Forge</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --gold:            #c9a84c;
-      --gold-dim:        #8a6e2f;
-      --gold-glow:       rgba(201,168,76,0.18);
-      --ink:             #0d0b07;
-      --parchment:       #1a1610;
-      --panel:           #13100c;
-      --border-rune:     rgba(201,168,76,0.25);
-      --border-bright:   rgba(201,168,76,0.6);
-      --text-main:       #e8dfc8;
-      --text-muted:      #8a7d62;
-      --text-dim:        #5a5040;
-      --error:           #c04040;
-      --radius-sm:       4px;
+      --gold:            #C9A84C;
+      --gold-dim:        #8A6E2F;
+      --gold-glow:       rgba(201,168,76,0.1);
+      --ink:             #0D0F14;
+      --surface:         #13161D;
+      --surface2:        #1A1E28;
+      --panel:           #13161D;
+      --border:          #252B38;
+      --border2:         #313848;
+      --border-rune:     #252B38;
+      --border-bright:   rgba(201,168,76,0.5);
+      --text-main:       #C8D0DC;
+      --text-muted:      #5C6880;
+      --text-dim:        #3d4558;
+      --error:           #C04444;
+      --radius-sm:       6px;
       --radius:          8px;
-      --radius-lg:       14px;
-      --transition:      0.2s ease;
+      --radius-lg:       12px;
+      --transition:      0.15s ease;
     }
 
     html, body {
@@ -58,7 +61,7 @@
       padding: 2rem;
       background:
         radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 70%),
-        linear-gradient(180deg, #0d0b07 0%, #110e09 100%);
+        linear-gradient(180deg, #0D0F14 0%, #0a0d11 100%);
     }
 
     .home-grid {
@@ -148,23 +151,21 @@
       align-items: center;
       justify-content: center;
       padding: 2rem;
-      background:
-        radial-gradient(ellipse 50% 40% at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 65%),
-        #0d0b07;
+      background: var(--ink);
     }
 
     .auth-panel {
       width: 100%; max-width: 400px;
-      background: var(--panel);
-      border: 1px solid var(--border-rune);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 2.25rem 2rem;
       position: relative;
     }
     .auth-panel::before {
       content: '';
-      position: absolute; top: -1px; left: 20%; right: 20%; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      position: absolute; top: -1px; left: 20%; right: 20%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
       border-radius: 99px;
     }
 
@@ -202,10 +203,11 @@
     /* Tabs */
     .auth-tabs {
       display: flex;
-      border: 1px solid var(--border-rune);
+      border: 1px solid var(--border2);
       border-radius: var(--radius-sm);
       overflow: hidden;
       margin-bottom: 1.5rem;
+      background: var(--surface2);
     }
     .auth-tab {
       flex: 1; padding: 0.52rem;
@@ -217,7 +219,7 @@
       cursor: pointer; transition: var(--transition);
     }
     .auth-tab.active {
-      background: var(--gold-glow);
+      background: var(--surface);
       color: var(--gold);
       box-shadow: inset 0 -2px 0 var(--gold);
     }
@@ -232,23 +234,23 @@
     label.form-label {
       font-size: 0.7rem; font-weight: 500;
       color: var(--text-muted);
-      letter-spacing: 0.12em; text-transform: uppercase;
+      letter-spacing: 0.04em; text-transform: uppercase;
     }
 
     input.form-input {
-      width: 100%; padding: 0.68rem 0.85rem;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border-rune);
+      width: 100%; padding: 0.5rem 0.7rem;
+      background: var(--ink);
+      border: 1px solid var(--border2);
       border-radius: var(--radius-sm);
       color: var(--text-main);
-      font-family: 'Inter', sans-serif; font-size: 0.88rem;
-      outline: none; transition: var(--transition);
+      font-family: 'Inter', sans-serif; font-size: 0.875rem;
+      outline: none; transition: border-color 0.15s, box-shadow 0.15s;
     }
     input.form-input:focus {
-      border-color: var(--gold-dim);
+      border-color: var(--gold);
       box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
     }
-    input.form-input::placeholder { color: var(--text-dim); }
+    input.form-input::placeholder { color: var(--text-muted); }
     input.form-input.invalid { border-color: var(--error); }
 
     .form-error {
@@ -267,54 +269,54 @@
 
     /* Buttons */
     .btn-primary {
-      width: 100%; padding: 0.82rem;
-      background: var(--gold); color: #0d0b07;
+      width: 100%; padding: 0.55rem;
+      background: var(--gold); color: #0D0F14;
       border: none; border-radius: var(--radius-sm);
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem; font-weight: 700;
-      letter-spacing: 0.15em; text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.02em;
       cursor: pointer; transition: var(--transition);
     }
-    .btn-primary:hover:not(:disabled) { background: #ddb85a; transform: translateY(-1px); }
+    .btn-primary:hover:not(:disabled) { background: #d9b85c; box-shadow: 0 0 16px rgba(201,168,76,0.35); }
     .btn-primary:disabled { opacity: 0.6; cursor: default; }
 
     .btn-outline {
-      width: 100%; padding: 0.82rem;
-      background: transparent; color: var(--gold);
-      border: 1px solid var(--border-bright);
+      width: 100%; padding: 0.55rem;
+      background: var(--surface2); color: var(--text-muted);
+      border: 1px solid var(--border2);
       border-radius: var(--radius-sm);
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem; font-weight: 600;
-      letter-spacing: 0.15em; text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.02em;
       cursor: pointer; transition: var(--transition);
     }
-    .btn-outline:hover { background: var(--gold-glow); border-color: var(--gold); }
+    .btn-outline:hover { border-color: var(--gold-dim); color: var(--gold); }
 
     .btn-ghost {
       width: 100%; background: none; border: none; padding: 0.5rem;
-      color: var(--text-muted); font-size: 0.78rem;
-      letter-spacing: 0.04em; cursor: pointer;
+      color: var(--text-muted); font-size: 0.75rem;
+      letter-spacing: 0.02em; cursor: pointer;
       transition: var(--transition);
     }
     .btn-ghost:hover { color: var(--text-main); }
 
     .btn-dashed {
-      width: 100%; padding: 0.62rem;
+      width: 100%; padding: 0.55rem;
       background: transparent; color: var(--text-muted);
-      border: 1px dashed rgba(201,168,76,0.2);
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.12em; text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.02em;
       cursor: pointer; transition: var(--transition);
     }
-    .btn-dashed:hover { border-color: var(--border-bright); color: var(--text-main); }
+    .btn-dashed:hover { border-color: var(--gold-dim); color: var(--gold); }
 
     .auth-divider {
       display: flex; align-items: center; gap: 0.7rem;
     }
-    .divider-line { flex: 1; height: 1px; background: var(--border-rune); }
-    .divider-text { font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.1em; }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-text { font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.06em; }
 
     /* Loading spinner */
     .spinner {
@@ -329,15 +331,16 @@
 
     /* Toast */
     #toast {
-      position: fixed; bottom: 1.5rem; left: 50%;
+      position: fixed; bottom: 2rem; left: 50%;
       transform: translateX(-50%) translateY(12px);
-      background: var(--panel);
-      border: 1px solid var(--border-bright);
-      color: var(--text-main);
+      background: var(--gold);
+      color: #0D0F14;
       padding: 0.55rem 1.2rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.78rem; letter-spacing: 0.04em;
-      opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease;
+      border-radius: 100px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 600;
+      box-shadow: 0 4px 20px rgba(201,168,76,0.35);
+      opacity: 0; transition: all 0.25s ease;
       z-index: 999; white-space: nowrap; pointer-events: none;
     }
     #toast.show {
