@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kenosis Game Planner</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -38,63 +38,22 @@
 
   /* ── Header ── */
   header {
-    padding: 0.7rem 2rem;
+    padding: 1rem 2rem;
     border-bottom: 1px solid var(--border);
     background: var(--surface);
     display: flex;
     align-items: center;
     gap: 1rem;
-    position: relative;
   }
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: -1px; left: 10%; right: 10%; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
-  }
-  .header-crest {
-    width: 36px; height: 36px;
-    border: 1px solid rgba(201,168,76,0.5);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
-  }
-  .header-crest svg { width: 18px; height: 18px; }
   header h1 {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.06em;
-    color: var(--gold);
-  }
-  header h1 span {
-    font-weight: 400;
-    color: var(--text-dim);
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-left: 0.5rem;
-  }
-  .header-signout {
-    margin-left: auto;
-    display: flex; align-items: center; gap: 0.5rem;
-    font-size: 0.72rem; color: var(--text-dim);
-  }
-  .header-signout span { color: var(--text-dim); }
-  .header-signout button {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 0.25rem 0.6rem;
     font-family: 'Inter', sans-serif;
-    font-size: 0.68rem;
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.04em;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -.02em;
+    color: var(--text);
   }
-  .header-signout button:hover { border-color: var(--gold-dim); color: var(--gold); }
+  header h1 span { color: var(--gold); }
+  header p { font-size: .8rem; color: var(--text-dim); margin-left: auto; font-weight: 400; }
 
   /* ── Main layout ── */
   main { flex: 1; display: grid; grid-template-columns: 360px 1fr; gap: 0; min-height: 0; }
@@ -392,18 +351,8 @@
 <body>
 
 <header>
-  <div class="header-crest" aria-hidden="true">
-    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="22,4 28,18 44,18 32,28 36,42 22,34 8,42 12,28 0,18 16,18"
-               fill="none" stroke="#c9a84c" stroke-width="1.5"/>
-      <circle cx="22" cy="22" r="6" fill="none" stroke="#c9a84c" stroke-width="1"/>
-    </svg>
-  </div>
-  <h1>Kenosis <span>Card Creator</span></h1>
-  <div class="header-signout" id="headerSignout">
-    <span id="headerUser"></span>
-    <button onclick="signOut()">Sign out</button>
-  </div>
+  <h1>Kenosis <span>Game Planner</span></h1>
+  <p>Card Builder</p>
 </header>
 
 <main>
@@ -543,7 +492,9 @@
 <div class="toast" id="toast"></div>
 
 <script>
- 
+/* ════════════════════════════════════════════
+   PALETTE
+════════════════════════════════════════════ */
 const COLORS = [
   { id:'crimson',  hex:'#C0392B', frame:'#7A1A1A', badge:'#8B2222', band:'rgba(122,26,26,.13)' },
   { id:'amber',    hex:'#D4820A', frame:'#7A4A08', badge:'#8B5010', band:'rgba(122,74,8,.12)'  },
@@ -567,14 +518,20 @@ const rarityShimmer = {
 const KW_COLORS = ['default','red','orange','yellow'];
 const KW_COLOR_HEX = { default:'#a0aab8', red:'#e05555', orange:'#e07030', yellow:'#d4b832' };
 
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
 let cards = [];
 let editingId       = null;
 let currentArtDataUrl = null;
 let currentRarity   = 'Common';
 let currentColorId  = 'crimson';
-let currentCost     = '1';          // '0'.'9', 'X', or any string for custom
+let currentCost     = '1';          // '0'..'9', 'X', or any string for custom
 let activeKwColor   = 'default';
 
+/* ════════════════════════════════════════════
+   ENERGY COST PICKER
+════════════════════════════════════════════ */
 function buildCostPicker() {
   const container = document.getElementById('cost-picker');
   container.innerHTML = '';
@@ -622,6 +579,9 @@ function selectCost(val) {
   updatePreview();
 }
 
+/* ════════════════════════════════════════════
+   COLOR SWATCHES
+════════════════════════════════════════════ */
 function buildSwatches() {
   const container = document.getElementById('color-swatches');
   container.innerHTML = '';
@@ -641,6 +601,9 @@ function buildSwatches() {
   });
 }
 
+/* ════════════════════════════════════════════
+   KEYWORD COLOR TOOLBAR
+════════════════════════════════════════════ */
 document.querySelectorAll('.kw-color-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     activeKwColor = btn.dataset.kwcolor;
@@ -649,6 +612,11 @@ document.querySelectorAll('.kw-color-btn').forEach(btn => {
   });
 });
 
+/* ════════════════════════════════════════════
+   RICH KEYWORD EDITOR
+   Format stored as plain text: *word|color* or *word* (default)
+   The contenteditable div shows styled <span class="kw-tag"> nodes.
+════════════════════════════════════════════ */
 const descLive = document.getElementById('desc-live');
 
 // Parse raw storage string → array of tokens: { type:'text'|'kw', text, color }
@@ -785,6 +753,9 @@ descLive.addEventListener('blur', () => {
   }
 });
 
+/* ════════════════════════════════════════════
+   UTIL
+════════════════════════════════════════════ */
 function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('show');
@@ -793,6 +764,9 @@ function toast(msg) {
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 function getColor(id) { return COLORS.find(c => c.id === id) || COLORS[0]; }
 
+/* ════════════════════════════════════════════
+   THEME
+════════════════════════════════════════════ */
 function applyTheme(frameEl, colorId, rarity) {
   const c = getColor(colorId);
   frameEl.style.setProperty('--card-frame-color', c.frame);
@@ -803,7 +777,9 @@ function applyTheme(frameEl, colorId, rarity) {
   if (band) band.style.background = c.band;
 }
 
-
+/* ════════════════════════════════════════════
+   LIVE PREVIEW
+════════════════════════════════════════════ */
 function updatePreview() {
   const name = document.getElementById('f-name').value.trim() || 'New Card';
   const type = document.getElementById('f-type').value;
@@ -833,7 +809,9 @@ function updatePreview() {
   applyTheme(document.getElementById('preview-frame'), currentColorId, currentRarity);
 }
 
-
+/* ════════════════════════════════════════════
+   RARITY
+════════════════════════════════════════════ */
 document.querySelectorAll('.rarity-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.rarity-btn').forEach(b => b.classList.remove('active'));
@@ -843,11 +821,16 @@ document.querySelectorAll('.rarity-btn').forEach(btn => {
   });
 });
 
+/* ════════════════════════════════════════════
+   NAME / TYPE
+════════════════════════════════════════════ */
 ['f-name','f-type'].forEach(id => {
   document.getElementById(id).addEventListener('input', updatePreview);
 });
 
-
+/* ════════════════════════════════════════════
+   ART UPLOAD
+════════════════════════════════════════════ */
 document.getElementById('f-art').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -860,7 +843,9 @@ document.getElementById('f-art').addEventListener('change', e => {
   reader.readAsDataURL(file);
 });
 
-
+/* ════════════════════════════════════════════
+   SAVE / RESET
+════════════════════════════════════════════ */
 function getFormData() {
   return {
     id:      editingId || uid(),
@@ -874,7 +859,7 @@ function getFormData() {
   };
 }
 
-function saveCard() {
+async function saveCard() {
   const card = getFormData();
   if (editingId) {
     const idx = cards.findIndex(c => c.id === editingId);
@@ -884,7 +869,9 @@ function saveCard() {
   } else {
     cards.push(card);
   }
-  persistCards(); renderGrid(); toast('Card saved!');
+  renderGrid(); toast('Saving…');
+  await persistCards();
+  toast('Card saved!');
 }
 
 function resetForm() {
@@ -907,6 +894,9 @@ function resetForm() {
   updatePreview();
 }
 
+/* ════════════════════════════════════════════
+   BUILD CARD DOM
+════════════════════════════════════════════ */
 function buildCardDOM(card, isThumb) {
   const c = getColor(card.colorId || 'crimson');
   const shimmer = rarityShimmer[card.rarity] || 'none';
@@ -935,6 +925,9 @@ function buildCardDOM(card, isThumb) {
   return el;
 }
 
+/* ════════════════════════════════════════════
+   GRID
+════════════════════════════════════════════ */
 function renderGrid() {
   const grid = document.getElementById('card-grid');
   document.getElementById('card-count').textContent = cards.length + ' card' + (cards.length !== 1 ? 's' : '');
@@ -958,6 +951,9 @@ function renderGrid() {
   });
 }
 
+/* ════════════════════════════════════════════
+   EDIT / DELETE
+════════════════════════════════════════════ */
 function editCard(id) {
   const card = cards.find(c => c.id === id);
   if (!card) return;
@@ -978,32 +974,104 @@ function editCard(id) {
   document.querySelector('.panel-form').scrollTop = 0;
 }
 
-function deleteCard(id) {
+async function deleteCard(id) {
   cards = cards.filter(c => c.id !== id);
   if (editingId === id) resetForm();
-  persistCards(); renderGrid(); toast('Card removed.');
+  renderGrid(); toast('Removing…');
+  await persistCards();
+  toast('Card removed.');
 }
 
-function persistCards() {
-  try { localStorage.setItem('kenosis_cards', JSON.stringify(cards)); } catch(e) {}
+/* ════════════════════════════════════════════
+   SUPABASE
+════════════════════════════════════════════ */
+const SB_URL = 'https://efprarpfgwiihrbwgxhz.supabase.co';
+const SB_KEY = 'sb_publishable_xx51FbZeklVxb8subL8fNQ_gVMQogIl';
+
+function sbHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Prefer': 'return=representation'
+  };
 }
-function loadCards() {
+
+function getSession() {
+  try { return JSON.parse(sessionStorage.getItem('kenosis_session') || 'null'); } catch(e) { return null; }
+}
+
+/* ════════════════════════════════════════════
+   PERSIST
+════════════════════════════════════════════ */
+async function persistCards() {
+  const session = getSession();
+  if (!session || session.guest) {
+    // Guest — fall back to localStorage
+    try { localStorage.setItem('kenosis_cards_guest', JSON.stringify(cards)); } catch(e) {}
+    return;
+  }
+  // Sync all cards for this user: delete existing then insert fresh
+  // (simple strategy — avoids complex diffing for now)
   try {
-    const raw = localStorage.getItem('kenosis_cards')
-             || localStorage.getItem('cardforge_cards'); // migrate old key
-    if (raw) {
-      cards = JSON.parse(raw);
-      cards = cards.map(c => {
-        if (!c.colorId && c.faction) {
-          const map = { fire:'crimson', water:'sky', nature:'lime', shadow:'indigo', light:'gold', neutral:'slate' };
-          c.colorId = map[c.faction] || 'crimson';
-        }
-        // migrate old plain *word* to *word|default*
-        if (c.desc) c.desc = c.desc.replace(/\*([^*|]+)\*/g, '*$1|default*');
-        return c;
+    await fetch(`${SB_URL}/rest/v1/cards?user_id=eq.${session.id}`, {
+      method: 'DELETE', headers: sbHeaders()
+    });
+    if (cards.length > 0) {
+      const rows = cards.map(c => ({ user_id: session.id, card_data: c }));
+      await fetch(`${SB_URL}/rest/v1/cards`, {
+        method: 'POST',
+        headers: sbHeaders(),
+        body: JSON.stringify(rows)
       });
     }
-  } catch(e) { cards = []; }
+  } catch(e) {
+    console.warn('Supabase sync failed, saving locally:', e);
+    try { localStorage.setItem('kenosis_cards_' + session.id, JSON.stringify(cards)); } catch(_) {}
+  }
+}
+
+async function loadCards() {
+  const session = getSession();
+
+  if (!session || session.guest) {
+    // Guest — load from localStorage
+    try {
+      const raw = localStorage.getItem('kenosis_cards_guest')
+               || localStorage.getItem('kenosis_cards')
+               || localStorage.getItem('cardforge_cards');
+      cards = raw ? migrateCards(JSON.parse(raw)) : [];
+    } catch(e) { cards = []; }
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/cards?user_id=eq.${session.id}&select=card_data&order=created_at.asc`,
+      { headers: sbHeaders() }
+    );
+    if (!res.ok) throw new Error('fetch failed');
+    const rows = await res.json();
+    cards = migrateCards(rows.map(r => r.card_data));
+  } catch(e) {
+    console.warn('Could not load from Supabase, trying local fallback:', e);
+    try {
+      const raw = localStorage.getItem('kenosis_cards_' + session.id)
+               || localStorage.getItem('kenosis_cards');
+      cards = raw ? migrateCards(JSON.parse(raw)) : [];
+    } catch(_) { cards = []; }
+  }
+}
+
+function migrateCards(arr) {
+  return (arr || []).map(c => {
+    if (!c.colorId && c.faction) {
+      const map = { fire:'crimson', water:'sky', nature:'lime', shadow:'indigo', light:'gold', neutral:'slate' };
+      c.colorId = map[c.faction] || 'crimson';
+    }
+    if (c.desc) c.desc = c.desc.replace(/\*([^*|]+)\*/g, '*$1|default*');
+    return c;
+  });
 }
 
 /* ════════════════════════════════════════════
@@ -1032,31 +1100,15 @@ document.getElementById('import-file').addEventListener('change', e => {
 });
 
 /* ════════════════════════════════════════════
-   AUTH
-════════════════════════════════════════════ */
-function signOut() {
-  sessionStorage.removeItem('kenosis_session');
-  window.location.replace('./index.html');
-}
-
-(function initHeader() {
-  try {
-    var session = JSON.parse(sessionStorage.getItem('kenosis_session') || 'null');
-    var el = document.getElementById('headerUser');
-    if (el && session) {
-      el.textContent = session.guest ? 'Guest' : (session.name || session.email);
-    }
-  } catch(e) {}
-})();
-
-/* ════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════ */
-loadCards();
-buildSwatches();
-buildCostPicker();
-renderGrid();
-updatePreview();
+(async function init() {
+  await loadCards();
+  buildSwatches();
+  buildCostPicker();
+  renderGrid();
+  updatePreview();
+})();
 </script>
 </body>
 </html>
