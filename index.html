@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kenosis — Card Forge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:            #c9a84c;
+      --gold-dim:        #8a6e2f;
+      --gold-glow:       rgba(201,168,76,0.18);
+      --ink:             #0d0b07;
+      --parchment:       #1a1610;
+      --panel:           #13100c;
+      --border-rune:     rgba(201,168,76,0.25);
+      --border-bright:   rgba(201,168,76,0.6);
+      --text-main:       #e8dfc8;
+      --text-muted:      #8a7d62;
+      --text-dim:        #5a5040;
+      --error:           #c04040;
+      --radius-sm:       4px;
+      --radius:          8px;
+      --radius-lg:       14px;
+      --transition:      0.2s ease;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--ink);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SCREENS ── */
+    .screen { display: none; min-height: 100vh; animation: fadeIn 0.35s ease; }
+    .screen.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ══════════════════════════════════════════
+       HOME SCREEN
+    ══════════════════════════════════════════ */
+    #home {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 2rem;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 70%),
+        linear-gradient(180deg, #0d0b07 0%, #110e09 100%);
+    }
+
+    .home-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .home-crest {
+      width: 96px; height: 96px;
+      border: 2px solid var(--border-bright);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+      z-index: 1;
+    }
+    .home-crest::before {
+      content: '';
+      position: absolute; inset: 6px;
+      border: 1px solid var(--border-rune);
+      border-radius: 50%;
+    }
+    .home-crest svg { width: 46px; height: 46px; }
+
+    h1.home-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-align: center;
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+      text-shadow: 0 2px 28px rgba(201,168,76,0.22);
+      z-index: 1;
+    }
+
+    p.home-sub {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.72rem, 1.6vw, 0.9rem);
+      color: var(--text-muted);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      z-index: 1;
+    }
+
+    .home-divider {
+      width: 200px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      margin-bottom: 2.5rem;
+      z-index: 1;
+    }
+
+    .home-actions {
+      display: flex; flex-direction: column; gap: 0.85rem;
+      width: 100%; max-width: 300px;
+      z-index: 1;
+    }
+
+    /* ── CARDS DECORATION ── */
+    .home-cards {
+      position: absolute; bottom: -28px;
+      display: flex; gap: 10px;
+      opacity: 0.12; pointer-events: none; filter: blur(1px);
+    }
+    .preview-card {
+      width: 76px; height: 108px;
+      border: 1px solid var(--gold-dim);
+      border-radius: 6px;
+      background: linear-gradient(155deg, #1e1810, #13100c);
+    }
+    .preview-card:nth-child(1) { transform: rotate(-13deg) translateY(-12px); }
+    .preview-card:nth-child(2) { transform: rotate(-4deg)  translateY(-4px); }
+    .preview-card:nth-child(3) { transform: rotate(4deg)   translateY(-4px); }
+    .preview-card:nth-child(4) { transform: rotate(13deg)  translateY(-12px); }
+
+    /* ══════════════════════════════════════════
+       AUTH SCREEN
+    ══════════════════════════════════════════ */
+    #auth {
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background:
+        radial-gradient(ellipse 50% 40% at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 65%),
+        #0d0b07;
+    }
+
+    .auth-panel {
+      width: 100%; max-width: 400px;
+      background: var(--panel);
+      border: 1px solid var(--border-rune);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2rem;
+      position: relative;
+    }
+    .auth-panel::before {
+      content: '';
+      position: absolute; top: -1px; left: 20%; right: 20%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      border-radius: 99px;
+    }
+
+    .auth-back {
+      display: flex; align-items: center; gap: 5px;
+      background: none; border: none; padding: 0;
+      color: var(--text-muted); font-size: 0.76rem;
+      letter-spacing: 0.05em; cursor: pointer;
+      margin-bottom: 1.75rem;
+      transition: var(--transition);
+    }
+    .auth-back:hover { color: var(--gold); }
+    .auth-back svg { width: 13px; height: 13px; }
+
+    .auth-logo {
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 1.75rem;
+    }
+    .auth-logo-mark {
+      width: 46px; height: 46px;
+      border: 1px solid var(--border-bright);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 0.7rem;
+      background: var(--gold-glow);
+    }
+    .auth-logo-mark svg { width: 22px; height: 22px; }
+
+    .auth-mode-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--gold); letter-spacing: 0.08em;
+    }
+
+    /* Tabs */
+    .auth-tabs {
+      display: flex;
+      border: 1px solid var(--border-rune);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .auth-tab {
+      flex: 1; padding: 0.52rem;
+      background: transparent; border: none;
+      color: var(--text-muted);
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; transition: var(--transition);
+    }
+    .auth-tab.active {
+      background: var(--gold-glow);
+      color: var(--gold);
+      box-shadow: inset 0 -2px 0 var(--gold);
+    }
+    .auth-tab:not(.active):hover { color: var(--text-main); }
+
+    /* Forms */
+    .auth-form { display: flex; flex-direction: column; gap: 0.9rem; }
+    .auth-form[hidden] { display: none; }
+
+    .form-field { display: flex; flex-direction: column; gap: 0.35rem; }
+
+    label.form-label {
+      font-size: 0.7rem; font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    input.form-input {
+      width: 100%; padding: 0.68rem 0.85rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-rune);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif; font-size: 0.88rem;
+      outline: none; transition: var(--transition);
+    }
+    input.form-input:focus {
+      border-color: var(--gold-dim);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+    }
+    input.form-input::placeholder { color: var(--text-dim); }
+    input.form-input.invalid { border-color: var(--error); }
+
+    .form-error {
+      font-size: 0.72rem; color: var(--error);
+      display: none;
+    }
+    .form-error.show { display: block; }
+
+    .form-hint {
+      font-size: 0.7rem; color: var(--text-dim);
+      background: none; border: none; padding: 0;
+      cursor: pointer; align-self: flex-end;
+      transition: var(--transition);
+    }
+    .form-hint:hover { color: var(--gold); }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%; padding: 0.82rem;
+      background: var(--gold); color: #0d0b07;
+      border: none; border-radius: var(--radius-sm);
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      cursor: pointer; transition: var(--transition);
+    }
+    .btn-primary:hover:not(:disabled) { background: #ddb85a; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: default; }
+
+    .btn-outline {
+      width: 100%; padding: 0.82rem;
+      background: transparent; color: var(--gold);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-sm);
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      cursor: pointer; transition: var(--transition);
+    }
+    .btn-outline:hover { background: var(--gold-glow); border-color: var(--gold); }
+
+    .btn-ghost {
+      width: 100%; background: none; border: none; padding: 0.5rem;
+      color: var(--text-muted); font-size: 0.78rem;
+      letter-spacing: 0.04em; cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-ghost:hover { color: var(--text-main); }
+
+    .btn-dashed {
+      width: 100%; padding: 0.62rem;
+      background: transparent; color: var(--text-muted);
+      border: 1px dashed rgba(201,168,76,0.2);
+      border-radius: var(--radius-sm);
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      cursor: pointer; transition: var(--transition);
+    }
+    .btn-dashed:hover { border-color: var(--border-bright); color: var(--text-main); }
+
+    .auth-divider {
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+    .divider-line { flex: 1; height: 1px; background: var(--border-rune); }
+    .divider-text { font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.1em; }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(13,11,7,0.3);
+      border-top-color: #0d0b07;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 5px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast */
+    #toast {
+      position: fixed; bottom: 1.5rem; left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: var(--panel);
+      border: 1px solid var(--border-bright);
+      color: var(--text-main);
+      padding: 0.55rem 1.2rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem; letter-spacing: 0.04em;
+      opacity: 0; transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 999; white-space: nowrap; pointer-events: none;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ HOME ══════════════ -->
+<div id="home" class="screen active">
+  <div class="home-grid"></div>
+
+  <div class="home-crest">
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <polygon points="22,4 28,18 44,18 32,28 36,42 22,34 8,42 12,28 0,18 16,18"
+               fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="22" cy="22" r="6" fill="none" stroke="#c9a84c" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <h1 class="home-title">Kenosis</h1>
+  <p class="home-sub">Card Forge</p>
+  <div class="home-divider"></div>
+
+  <div class="home-actions">
+    <button class="btn-primary"  onclick="showAuth('login')"   >Enter the Forge</button>
+    <button class="btn-outline"  onclick="showAuth('register')">Create Account</button>
+    <button class="btn-ghost"    onclick="guestEnter()"        >Continue as Guest</button>
+  </div>
+
+  <div class="home-cards" aria-hidden="true">
+    <div class="preview-card"></div>
+    <div class="preview-card"></div>
+    <div class="preview-card"></div>
+    <div class="preview-card"></div>
+  </div>
+</div>
+
+<!-- ══════════════ AUTH ══════════════ -->
+<div id="auth" class="screen">
+  <div class="auth-panel">
+
+    <button class="auth-back" onclick="show('home')" aria-label="Back to home">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M10 3L5 8l5 5"/>
+      </svg>
+      Back
+    </button>
+
+    <div class="auth-logo">
+      <div class="auth-logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="22,4 28,18 44,18 32,28 36,42 22,34 8,42 12,28 0,18 16,18"
+                   fill="none" stroke="#c9a84c" stroke-width="1.8"/>
+        </svg>
+      </div>
+      <p class="auth-mode-title" id="authTitle">Sign In</p>
+    </div>
+
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" id="tab-login"    role="tab" aria-selected="true"
+              onclick="switchTab('login')"   >Sign In</button>
+      <button class="auth-tab"        id="tab-register" role="tab" aria-selected="false"
+              onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- ── LOGIN ── -->
+    <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)" novalidate
+          role="tabpanel" aria-labelledby="tab-login">
+
+      <div class="form-field">
+        <label class="form-label" for="loginEmail">Email</label>
+        <input class="form-input" id="loginEmail" type="email"
+               placeholder="forge@kenosis.gg" autocomplete="email" />
+        <span class="form-error" id="loginEmailErr">Enter a valid email address</span>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="loginPass">Password</label>
+        <input class="form-input" id="loginPass" type="password"
+               placeholder="••••••••" autocomplete="current-password" />
+        <span class="form-error" id="loginPassErr">Incorrect email or password</span>
+        <button type="button" class="form-hint" onclick="toast('Password reset link sent to your email')">
+          Forgot password?
+        </button>
+      </div>
+
+      <button type="submit" class="btn-primary" id="loginBtn">Enter the Forge</button>
+
+      <div class="auth-divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <button type="button" class="btn-dashed" onclick="guestEnter()">Continue as Guest</button>
+    </form>
+
+    <!-- ── REGISTER ── -->
+    <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)" novalidate
+          role="tabpanel" aria-labelledby="tab-register" hidden>
+
+      <div class="form-field">
+        <label class="form-label" for="regName">Display Name</label>
+        <input class="form-input" id="regName" type="text"
+               placeholder="The Architect" autocomplete="nickname" />
+        <span class="form-error" id="regNameErr">Name is required</span>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="regEmail">Email</label>
+        <input class="form-input" id="regEmail" type="email"
+               placeholder="forge@kenosis.gg" autocomplete="email" />
+        <span class="form-error" id="regEmailErr">Enter a valid email address</span>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="regPass">Password</label>
+        <input class="form-input" id="regPass" type="password"
+               placeholder="Min. 8 characters" autocomplete="new-password" />
+        <span class="form-error" id="regPassErr">At least 8 characters required</span>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="regPassConfirm">Confirm Password</label>
+        <input class="form-input" id="regPassConfirm" type="password"
+               placeholder="••••••••" autocomplete="new-password" />
+        <span class="form-error" id="regPassConfirmErr">Passwords don't match</span>
+      </div>
+
+      <button type="submit" class="btn-primary" id="registerBtn">Create Account</button>
+
+      <div class="auth-divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <button type="button" class="btn-dashed" onclick="guestEnter()">Continue as Guest</button>
+    </form>
+
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  /* ── Storage helpers ── */
+  const USERS_KEY   = 'kenosis_users';
+  const SESSION_KEY = 'kenosis_session';
+
+  function loadUsers()  { return JSON.parse(localStorage.getItem(USERS_KEY)  || '[]'); }
+  function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+  function loadSession(){ return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); }
+  function saveSession(u){ sessionStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
+  function clearSession(){ sessionStorage.removeItem(SESSION_KEY); }
+
+  /* ── Screen routing ── */
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function showAuth(mode) {
+    show('auth');
+    switchTab(mode || 'login');
+  }
+
+  /* ── Tab switch ── */
+  function switchTab(tab) {
+    const isLogin = (tab === 'login');
+    document.getElementById('tab-login').classList.toggle('active', isLogin);
+    document.getElementById('tab-register').classList.toggle('active', !isLogin);
+    document.getElementById('tab-login').setAttribute('aria-selected', isLogin);
+    document.getElementById('tab-register').setAttribute('aria-selected', !isLogin);
+    document.getElementById('loginForm').hidden    = !isLogin;
+    document.getElementById('registerForm').hidden = isLogin;
+    document.getElementById('authTitle').textContent = isLogin ? 'Sign In' : 'Register';
+    clearErrors();
+  }
+
+  /* ── Validation helpers ── */
+  function clearErrors() {
+    document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+    document.querySelectorAll('.form-input').forEach(i => i.classList.remove('invalid'));
+  }
+
+  function fieldError(errId, inputId, msg) {
+    const err = document.getElementById(errId);
+    if (msg) err.textContent = msg;
+    err.classList.add('show');
+    document.getElementById(inputId).classList.add('invalid');
+    return false;
+  }
+
+  function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+  /* ── Login ── */
+  function handleLogin(e) {
+    e.preventDefault();
+    clearErrors();
+
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass  = document.getElementById('loginPass').value;
+    let ok = true;
+
+    if (!validEmail(email))
+      ok = fieldError('loginEmailErr', 'loginEmail', 'Enter a valid email address');
+    if (!pass)
+      ok = fieldError('loginPassErr', 'loginPass', 'Password is required') && ok;
+    if (!ok) return;
+
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Entering…';
+
+    setTimeout(() => {
+      const users = loadUsers();
+      const user  = users.find(u => u.email === email && u.password === pass);
+
+      if (!user) {
+        btn.disabled = false;
+        btn.textContent = 'Enter the Forge';
+        fieldError('loginPassErr', 'loginPass', 'Incorrect email or password');
+        return;
+      }
+
+      saveSession(user);
+      enterForge(user);
+    }, 800);
+  }
+
+  /* ── Register ── */
+  function handleRegister(e) {
+    e.preventDefault();
+    clearErrors();
+
+    const name    = document.getElementById('regName').value.trim();
+    const email   = document.getElementById('regEmail').value.trim();
+    const pass    = document.getElementById('regPass').value;
+    const confirm = document.getElementById('regPassConfirm').value;
+    let ok = true;
+
+    if (!name)              ok = fieldError('regNameErr',        'regName',        'Name is required');
+    if (!validEmail(email)) ok = fieldError('regEmailErr',       'regEmail',       'Enter a valid email address') && ok;
+    if (pass.length < 8)   ok = fieldError('regPassErr',        'regPass',        'At least 8 characters required') && ok;
+    if (pass !== confirm)  ok = fieldError('regPassConfirmErr', 'regPassConfirm', "Passwords don't match") && ok;
+    if (!ok) return;
+
+    const users = loadUsers();
+    if (users.find(u => u.email === email)) {
+      fieldError('regEmailErr', 'regEmail', 'This email is already registered');
+      return;
+    }
+
+    const btn = document.getElementById('registerBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Creating account…';
+
+    setTimeout(() => {
+      const user = { name, email, password: pass, guest: false };
+      users.push(user);
+      saveUsers(users);
+      saveSession(user);
+      toast('Welcome to the Forge, ' + name + '!');
+      enterForge(user);
+    }, 900);
+  }
+
+  /* ── Guest ── */
+  function guestEnter() {
+    const user = { name: 'Guest', email: null, guest: true };
+    saveSession(user);
+    enterForge(user);
+  }
+
+  /* ── Enter the app ── */
+  function enterForge(user) {
+    /*
+     * Redirect to the card-forge page, passing a flag so it knows
+     * the user is authenticated. Adjust the path below if your repo
+     * structure is different.
+     */
+    window.location.href = './card-forge/index.html';
+  }
+
+  /* ── Toast ── */
+  let _toastTimer;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+  }
+
+  /* ── Auto-restore session ── */
+  (function init() {
+    const session = loadSession();
+    if (session) {
+      /* Already logged in — go straight to the forge */
+      enterForge(session);
+    }
+  })();
+</script>
+</body>
+</html>
