@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kenosis — Card Forge</title>
+  <title>Kenosis — Card Creator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -364,11 +364,11 @@
   </div>
 
   <h1 class="home-title">Kenosis</h1>
-  <p class="home-sub">Card Forge</p>
+  <p class="home-sub">Card Creator</p>
   <div class="home-divider"></div>
 
   <div class="home-actions">
-    <button class="btn-primary"  onclick="showAuth('login')"   >Enter the Forge</button>
+    <button class="btn-primary"  onclick="showAuth('login')"   >Enter Card Creator</button>
     <button class="btn-outline"  onclick="showAuth('register')">Create Account</button>
     <button class="btn-ghost"    onclick="guestEnter()"        >Continue as Guest</button>
   </div>
@@ -416,7 +416,7 @@
       <div class="form-field">
         <label class="form-label" for="loginEmail">Email</label>
         <input class="form-input" id="loginEmail" type="email"
-               placeholder="forge@kenosis.gg" autocomplete="email" />
+               placeholder="card@kenosis.gg" autocomplete="email" />
         <span class="form-error" id="loginEmailErr">Enter a valid email address</span>
       </div>
 
@@ -430,7 +430,7 @@
         </button>
       </div>
 
-      <button type="submit" class="btn-primary" id="loginBtn">Enter the Forge</button>
+      <button type="submit" class="btn-primary" id="loginBtn">Enter Card Creator</button>
 
       <div class="auth-divider">
         <div class="divider-line"></div>
@@ -455,7 +455,7 @@
       <div class="form-field">
         <label class="form-label" for="regEmail">Email</label>
         <input class="form-input" id="regEmail" type="email"
-               placeholder="forge@kenosis.gg" autocomplete="email" />
+               placeholder="card@kenosis.com" autocomplete="email" />
         <span class="form-error" id="regEmailErr">Enter a valid email address</span>
       </div>
 
@@ -565,7 +565,7 @@
 
       if (!user) {
         btn.disabled = false;
-        btn.textContent = 'Enter the Forge';
+        btn.textContent = 'Enter Card Creator';
         fieldError('loginPassErr', 'loginPass', 'Incorrect email or password');
         return;
       }
@@ -607,29 +607,21 @@
       users.push(user);
       saveUsers(users);
       saveSession(user);
-      toast('Welcome to the Forge, ' + name + '!');
+      toast('Welcome to the Card Creator, ' + name + '!');
       enterForge(user);
     }, 900);
   }
 
-  /* ── Guest ── */
   function guestEnter() {
     const user = { name: 'Guest', email: null, guest: true };
     saveSession(user);
     enterForge(user);
   }
 
-  /* ── Enter the app ── */
   function enterForge(user) {
-    /*
-     * Redirect to the card-forge page, passing a flag so it knows
-     * the user is authenticated. Adjust the path below if your repo
-     * structure is different.
-     */
     window.location.href = './card-forge.html';
   }
 
-  /* ── Toast ── */
   let _toastTimer;
   function toast(msg) {
     const el = document.getElementById('toast');
@@ -639,11 +631,9 @@
     _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
   }
 
-  /* ── Auto-restore session ── */
   (function init() {
     const session = loadSession();
     if (session) {
-      /* Already logged in — go straight to the forge */
       enterForge(session);
     }
   })();
