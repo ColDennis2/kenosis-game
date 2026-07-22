@@ -372,6 +372,28 @@
   .collection-header h2 { font-size: .7rem; font-weight: 600; letter-spacing: .08em; color: var(--text-dim); text-transform: uppercase; }
   .collection-count { background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: .15rem .6rem; font-size: .72rem; color: var(--text-dim); font-weight: 500; }
   .collection-actions { margin-left: auto; display: flex; gap: .4rem; }
+  .collection-filter-bar {
+    display: flex; align-items: center; gap: .6rem; margin-bottom: 1.4rem; flex-wrap: wrap;
+  }
+  .search-input {
+    flex: 1 1 240px; min-width: 180px;
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px;
+    color: var(--text); font-family: 'Inter', sans-serif; font-size: .82rem;
+    padding: .5rem .8rem; outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .search-input::placeholder { color: var(--text-dim); }
+  .search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.1); }
+  .category-select {
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px;
+    color: var(--text); font-family: 'Inter', sans-serif; font-size: .78rem; font-weight: 500;
+    padding: .5rem .6rem; outline: none; cursor: pointer; transition: border-color .15s;
+  }
+  .category-select:focus { border-color: var(--gold); }
+  .filter-clear {
+    font-size: .7rem; font-weight: 600; color: var(--text-dim); background: none; border: none;
+    cursor: pointer; padding: .3rem .4rem; letter-spacing: .02em; transition: color .15s;
+  }
+  .filter-clear:hover { color: var(--gold); }
   .btn-sm {
     padding: .3rem .75rem; font-size: .7rem; font-weight: 600; flex: none;
     border-radius: 6px; border: 1px solid var(--border2); background: var(--surface2);
@@ -404,6 +426,15 @@
   }
   .thumb-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
   .thumb-btn.del:hover { border-color: var(--crimson-l); color: var(--crimson-l); }
+  .thumb-cat-select {
+    width: 100%; max-width: 160px;
+    background: var(--surface); border: 1px solid var(--border2); border-radius: 5px;
+    color: var(--text-dim); font-family: 'Inter', sans-serif; font-size: .62rem; font-weight: 500;
+    padding: .2rem .35rem; cursor: pointer; outline: none; transition: all .13s;
+    text-align: center; text-transform: uppercase; letter-spacing: .03em;
+  }
+  .thumb-cat-select:hover, .thumb-cat-select:focus { border-color: var(--gold-dim); color: var(--gold); }
+  .thumb-cat-select.uncategorized { font-style: italic; opacity: .7; }
   .empty-state { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-dim); font-size: .9rem; }
   .empty-state strong { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .08em; color: var(--border2); margin-bottom: .4rem; text-transform: uppercase; }
 
@@ -474,6 +505,12 @@
         <option>Attack</option>
         <option>Skill</option>
       </select>
+    </div>
+
+    <div class="field">
+      <label>Category</label>
+      <input type="text" id="f-category" list="category-list" placeholder="e.g. Starter Deck" maxlength="40">
+      <datalist id="category-list"></datalist>
     </div>
 
     <div class="field">
@@ -574,6 +611,13 @@
           <button class="btn-sm gold" onclick="exportCards()">Export</button>
           <button class="btn-sm" onclick="document.getElementById('import-file').click()">Import</button>
         </div>
+      </div>
+      <div class="collection-filter-bar">
+        <input type="text" id="search-input" class="search-input" placeholder="Search by name or card text…" oninput="renderGrid()">
+        <select id="category-filter" class="category-select" onchange="renderGrid()">
+          <option value="">All Categories</option>
+        </select>
+        <button class="filter-clear" onclick="clearFilters()">Clear</button>
       </div>
       <div class="card-grid" id="card-grid">
         <div class="empty-state">
@@ -1015,6 +1059,7 @@ function getFormData() {
     name:    document.getElementById('f-name').value.trim() || 'Unnamed',
     cost:    currentCost,
     type:    document.getElementById('f-type').value,
+    category: document.getElementById('f-category').value.trim(),
     rarity:  currentRarity,
     colorId: currentColorId,
     desc:    editorToRaw(),
@@ -1032,6 +1077,7 @@ async function saveCard() {
   } else {
     cards.push(card);
   }
+  refreshCategoryOptions();
   renderGrid(); toast('Saving…');
   await persistCards();
   await syncStatusEffectsFromCards();
@@ -1043,6 +1089,7 @@ function resetForm() {
   document.getElementById('form-title').textContent = 'New Card';
   document.getElementById('f-name').value = '';
   document.getElementById('f-type').value = 'Attack';
+  document.getElementById('f-category').value = '';
   document.getElementById('f-art').value = '';
   document.getElementById('art-upload-label').textContent = '↑ Click to upload artwork';
   descLive.innerHTML = '';
@@ -1094,25 +1141,112 @@ function buildCardDOM(card, isThumb) {
 ════════════════════════════════════════════ */
 function renderGrid() {
   const grid = document.getElementById('card-grid');
-  document.getElementById('card-count').textContent = cards.length + ' card' + (cards.length !== 1 ? 's' : '');
+  const query = (document.getElementById('search-input').value || '').trim().toLowerCase();
+  const catFilter = document.getElementById('category-filter').value;
+
+  const visible = cards.filter(card => {
+    const cardCat = (card.category || '').trim();
+    if (catFilter === '__none__' && cardCat) return false;
+    if (catFilter && catFilter !== '__none__' && cardCat !== catFilter) return false;
+    if (query) {
+      const haystack = `${card.name} ${card.desc || ''} ${card.type || ''}`.toLowerCase();
+      if (!haystack.includes(query)) return false;
+    }
+    return true;
+  });
+
+  const filtering = !!(query || catFilter);
+  document.getElementById('card-count').textContent = filtering
+    ? `${visible.length} of ${cards.length} card${cards.length !== 1 ? 's' : ''}`
+    : `${cards.length} card${cards.length !== 1 ? 's' : ''}`;
+
   grid.innerHTML = '';
   if (!cards.length) {
     grid.innerHTML = `<div class="empty-state"><strong>No Cards Yet</strong>Build your first card and save it to start your collection.</div>`;
     return;
   }
-  cards.forEach(card => {
+  if (!visible.length) {
+    grid.innerHTML = `<div class="empty-state"><strong>No Matches</strong>Try a different search term or category.</div>`;
+    return;
+  }
+
+  const categories = getCategories();
+  visible.forEach(card => {
     const wrap = document.createElement('div');
     wrap.className = 'card-thumb-wrap';
     const mini = buildCardDOM(card, true);
     mini.title = card.name;
     mini.addEventListener('click', () => editCard(card.id));
+
+    const catSelect = document.createElement('select');
+    const cardCat = (card.category || '').trim();
+    catSelect.className = 'thumb-cat-select' + (!cardCat ? ' uncategorized' : '');
+    catSelect.innerHTML =
+      `<option value="">No category</option>` +
+      categories.map(c => `<option value="${escHtml(c)}">${escHtml(c)}</option>`).join('') +
+      `<option value="__new__">+ New category…</option>`;
+    catSelect.value = cardCat;
+    catSelect.title = 'Assign to category';
+    catSelect.addEventListener('click', e => e.stopPropagation());
+    catSelect.addEventListener('change', e => {
+      e.stopPropagation();
+      setCardCategory(card.id, catSelect.value, catSelect);
+    });
+
     const actions = document.createElement('div');
     actions.className = 'thumb-actions';
     actions.innerHTML = `<button class="thumb-btn" onclick="editCard('${card.id}')">Edit</button><button class="thumb-btn del" onclick="deleteCard('${card.id}')">✕</button>`;
+
     wrap.appendChild(mini);
+    wrap.appendChild(catSelect);
     wrap.appendChild(actions);
     grid.appendChild(wrap);
   });
+}
+
+function getCategories() {
+  return [...new Set(cards.map(c => (c.category || '').trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b));
+}
+
+function refreshCategoryOptions() {
+  const categories = getCategories();
+  const filterSel = document.getElementById('category-filter');
+  const prevVal = filterSel.value;
+  const hasUncategorized = cards.some(c => !(c.category || '').trim());
+  filterSel.innerHTML =
+    `<option value="">All Categories</option>` +
+    (hasUncategorized ? `<option value="__none__">Uncategorized</option>` : '') +
+    categories.map(c => `<option value="${escHtml(c)}">${escHtml(c)}</option>`).join('');
+  if ([...filterSel.options].some(o => o.value === prevVal)) filterSel.value = prevVal;
+
+  const datalist = document.getElementById('category-list');
+  datalist.innerHTML = categories.map(c => `<option value="${escHtml(c)}">`).join('');
+}
+
+async function setCardCategory(id, value, selectEl) {
+  const card = cards.find(c => c.id === id);
+  if (!card) return;
+  if (value === '__new__') {
+    const name = prompt('New category name:');
+    if (!name || !name.trim()) {
+      if (selectEl) selectEl.value = card.category || '';
+      return;
+    }
+    value = name.trim();
+  }
+  card.category = value;
+  if (editingId === id) document.getElementById('f-category').value = value;
+  refreshCategoryOptions();
+  renderGrid();
+  toast(value ? `Moved to "${value}"` : 'Category cleared');
+  await persistCards();
+}
+
+function clearFilters() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('category-filter').value = '';
+  renderGrid();
 }
 
 /* ════════════════════════════════════════════
@@ -1125,6 +1259,7 @@ function editCard(id) {
   document.getElementById('form-title').textContent = 'Editing';
   document.getElementById('f-name').value = card.name;
   document.getElementById('f-type').value = card.type;
+  document.getElementById('f-category').value = card.category || '';
   currentArtDataUrl = card.art;
   currentRarity = card.rarity;
   currentColorId = card.colorId || 'crimson';
@@ -1141,6 +1276,7 @@ function editCard(id) {
 async function deleteCard(id) {
   cards = cards.filter(c => c.id !== id);
   if (editingId === id) resetForm();
+  refreshCategoryOptions();
   renderGrid(); toast('Removing…');
   await persistCards();
   toast('Card removed.');
@@ -1176,6 +1312,7 @@ function migrateCards(arr) {
       const map = { fire:'crimson', water:'sky', nature:'lime', shadow:'indigo', light:'gold', neutral:'slate' };
       c.colorId = map[c.faction] || 'crimson';
     }
+    c.category = (c.category || '').trim();
     if (c.desc) {
       const tokens = parseDesc(c.desc);
       // Clean up stray "|default"/"|red"/"|orange"/"|yellow" left dangling in
@@ -1272,7 +1409,8 @@ document.getElementById('import-file').addEventListener('change', e => {
     try {
       const imported = JSON.parse(ev.target.result);
       if (Array.isArray(imported)) {
-        cards = imported; persistCards(); renderGrid();
+        cards = migrateCards(imported); persistCards();
+        refreshCategoryOptions(); renderGrid();
         toast(`Imported ${imported.length} card(s)!`);
       } else { toast('Invalid file.'); }
     } catch { toast('Could not parse file.'); }
@@ -1359,6 +1497,7 @@ async function syncStatusEffectsFromCards() {
   await loadStatusEffects();
   buildSwatches();
   buildCostPicker();
+  refreshCategoryOptions();
   renderGrid();
   updatePreview();
 })();
