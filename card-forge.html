@@ -474,7 +474,7 @@
              data-placeholder="Type card text… Select a word and press * to make it bold, then click its dot to change color."></div>
       </div>
       <div class="desc-hint">
-        Select text → press <code>*</code> to toggle bold keyword · Click the <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#a0aab8;vertical-align:middle"></span> dot to cycle color · Backspace removes tags normally
+        Select text → press <code>*</code> to toggle bold keyword · Press <code>*</code> again on a bold word to unbold · Click the <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#a0aab8;vertical-align:middle"></span> dot to cycle color · Backspace removes tags normally
       </div>
     </div>
 
@@ -671,7 +671,9 @@ const descLive = document.getElementById('desc-live');
 // Parse raw storage string → array of tokens: { type:'text'|'kw', text, color }
 function parseDesc(raw) {
   const tokens = [];
-  const re = /\*([^*]+?)\|?(default|red|orange|yellow)?\*/g;
+  // Matches *text|color* or *text* (color defaults to 'default')
+  // The pipe and color are strictly optional — no partial matches
+  const re = /\*([^*|]+?)(?:\|(default|red|orange|yellow))?\*/g;
   let last = 0, m;
   while ((m = re.exec(raw)) !== null) {
     if (m.index > last) tokens.push({ type:'text', text: raw.slice(last, m.index) });
@@ -768,16 +770,36 @@ function editorFromRaw(raw) {
   });
 }
 
-// Key handler: pressing * while text is selected → wrap as keyword
+// Key handler: pressing * while text is selected → wrap or unwrap keyword
 descLive.addEventListener('keydown', e => {
   if (e.key !== '*') return;
   const sel = window.getSelection();
   if (!sel || sel.isCollapsed) return;
   const range = sel.getRangeAt(0);
-  // Only act if selection is within descLive
   if (!descLive.contains(range.commonAncestorContainer)) return;
   e.preventDefault();
 
+  // Check if the entire selection is a single kw-tag → unwrap it
+  const ancestor = range.commonAncestorContainer;
+  const kwTag = ancestor.nodeType === Node.ELEMENT_NODE && ancestor.classList.contains('kw-tag')
+    ? ancestor
+    : ancestor.parentElement?.closest('.kw-tag');
+
+  if (kwTag && descLive.contains(kwTag)) {
+    // Unwrap: replace tag with plain text
+    const text = kwTag.querySelector('span:last-child')?.textContent || kwTag.textContent;
+    const textNode = document.createTextNode(text);
+    kwTag.replaceWith(textNode);
+    // Restore selection over the plain text
+    const newRange = document.createRange();
+    newRange.selectNode(textNode);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+    updatePreview();
+    return;
+  }
+
+  // Otherwise wrap selected text as a new keyword tag
   const text = range.toString().trim();
   if (!text) return;
   range.deleteContents();
