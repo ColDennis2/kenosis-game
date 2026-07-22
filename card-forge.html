@@ -341,6 +341,37 @@
   .card-desc-box .kw-orange   { font-weight: 700; color: #b85020; }
   .card-desc-box .kw-yellow   { font-weight: 700; color: #8a6c00; }
 
+  /* Status effect tooltip */
+  .kw-tip {
+    position: relative;
+    cursor: help;
+  }
+  .kw-tip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1A1E28;
+    color: #C8D0DC;
+    font-size: 0.62rem;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.4;
+    padding: 5px 8px;
+    border-radius: 5px;
+    border: 1px solid #313848;
+    white-space: pre-wrap;
+    max-width: 180px;
+    text-align: left;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .kw-tip:hover::after { opacity: 1; }
+
   /* ── Collection ── */
   .collection-section { padding: 1.8rem 2rem; flex: 1; }
   .collection-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.4rem; flex-wrap: wrap; }
@@ -418,6 +449,7 @@
   <nav class="header-nav">
     <a href="./card-forge.html" class="active">Card Planner</a>
     <a href="./lore.html">Lore</a>
+    <a href="./status-effects.html">Status Effects</a>
   </nav>
   <div class="header-signout">
     <span id="headerUser"></span>
@@ -713,11 +745,16 @@ function tokensToRaw(tokens) {
   ).join('');
 }
 
-// Tokens → card HTML
+// Tokens → card HTML (with tooltip if status effect has a description)
 function tokensToCardHTML(tokens) {
   return tokens.map(t => {
     if (t.type === 'text') return t.text.replace(/\n/g, '<br>');
     const cls = t.color === 'default' ? 'kw' : `kw-${t.color}`;
+    const key = seKey(t.text, t.color);
+    const se  = statusEffects.find(s => s.id === key);
+    if (se && se.desc) {
+      return `<span class="${cls} kw-tip" data-tip="${escHtml(se.desc)}">${escHtml(t.text)}</span>`;
+    }
     return `<span class="${cls}">${escHtml(t.text)}</span>`;
   }).join('');
 }
@@ -963,6 +1000,7 @@ async function saveCard() {
   }
   renderGrid(); toast('Saving…');
   await persistCards();
+  await syncStatusEffectsFromCards();
   toast('Card saved!');
 }
 
@@ -1196,10 +1234,82 @@ document.getElementById('import-file').addEventListener('change', e => {
 });
 
 /* ════════════════════════════════════════════
+   STATUS EFFECTS
+════════════════════════════════════════════ */
+let statusEffects = []; // [{ id, text, color, desc }]
+
+// Canonical key: "text|color"
+function seKey(text, color) { return `${text.trim().toLowerCase()}|${color || 'default'}`; }
+
+async function loadStatusEffects() {
+  const session = getSession();
+  if (!session || session.guest) {
+    try { statusEffects = JSON.parse(localStorage.getItem('kenosis_se_guest') || '[]'); } catch(e) { statusEffects = []; }
+    return;
+  }
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/status_effects?user_id=eq.${session.id}&select=effect_data`,
+      { headers: sbHeaders() }
+    );
+    if (!res.ok) throw new Error();
+    const rows = await res.json();
+    statusEffects = rows.map(r => r.effect_data);
+  } catch(e) {
+    try { statusEffects = JSON.parse(localStorage.getItem('kenosis_se_' + session.id) || '[]'); } catch(_) { statusEffects = []; }
+  }
+}
+
+async function persistStatusEffects() {
+  const session = getSession();
+  if (!session || session.guest) {
+    try { localStorage.setItem('kenosis_se_guest', JSON.stringify(statusEffects)); } catch(e) {}
+    return;
+  }
+  try {
+    await fetch(`${SB_URL}/rest/v1/status_effects?user_id=eq.${session.id}`, {
+      method: 'DELETE', headers: sbHeaders()
+    });
+    if (statusEffects.length) {
+      await fetch(`${SB_URL}/rest/v1/status_effects`, {
+        method: 'POST',
+        headers: sbHeaders(),
+        body: JSON.stringify(statusEffects.map(e => ({ user_id: session.id, effect_data: e })))
+      });
+    }
+  } catch(e) {
+    try { localStorage.setItem('kenosis_se_' + session.id, JSON.stringify(statusEffects)); } catch(_) {}
+  }
+}
+
+// Called after saving a card — scans all cards for bold keywords
+// and upserts any new ones into statusEffects (never overwrites desc)
+async function syncStatusEffectsFromCards() {
+  let changed = false;
+  cards.forEach(card => {
+    const tokens = parseDesc(card.desc || '');
+    tokens.filter(t => t.type === 'kw').forEach(t => {
+      const key = seKey(t.text, t.color);
+      if (!statusEffects.find(s => s.id === key)) {
+        statusEffects.push({
+          id:    key,
+          text:  t.text.trim(),
+          color: t.color || 'default',
+          desc:  ''
+        });
+        changed = true;
+      }
+    });
+  });
+  if (changed) await persistStatusEffects();
+}
+
+/* ════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════ */
 (async function init() {
   await loadCards();
+  await loadStatusEffects();
   buildSwatches();
   buildCostPicker();
   renderGrid();
