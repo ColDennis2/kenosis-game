@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="./auth-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kenosis — Status Effects</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0D0F14;
+    --surface:   #13161D;
+    --surface2:  #1A1E28;
+    --border:    #252B38;
+    --border2:   #313848;
+    --gold:      #C9A84C;
+    --gold-dim:  #8A6E2F;
+    --crimson:   #8B2E2E;
+    --crimson-l: #C04444;
+    --text:      #C8D0DC;
+    --text-dim:  #5C6880;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 0.7rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    flex-shrink: 0;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 10%; right: 10%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+  }
+  .header-crest {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(201,168,76,0.5);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+  .header-crest svg { width: 18px; height: 18px; }
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+  }
+  header h1 span {
+    font-weight: 400;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-left: 0.5rem;
+  }
+  .header-nav {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: 1.5rem;
+  }
+  .header-nav a {
+    padding: 0.28rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .header-nav a:hover { color: var(--text); background: var(--surface2); }
+  .header-nav a.active { color: var(--gold); border-color: var(--border2); background: var(--surface2); }
+  .header-right {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.72rem; color: var(--text-dim);
+  }
+  .header-right button {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .header-right button:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+  /* ── Layout ── */
+  .page {
+    flex: 1;
+    display: flex;
+    gap: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sidebar-head {
+    padding: 0.85rem 1rem 0.7rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sidebar-head h2 {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .se-count {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 99px;
+    padding: 1px 7px;
+  }
+
+  .se-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.4rem;
+  }
+  .se-list::-webkit-scrollbar { width: 4px; }
+  .se-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .se-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.65rem;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    margin-bottom: 2px;
+    transition: all 0.15s;
+  }
+  .se-item:hover { background: var(--surface2); }
+  .se-item.active { background: var(--surface2); border-color: var(--border2); }
+  .se-item.active .se-item-name { color: var(--gold); }
+
+  .se-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .se-item-name {
+    flex: 1;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .se-item-color-label {
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .se-item-desc-badge {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+    opacity: 0;
+  }
+  .se-item-desc-badge.has-desc { opacity: 1; }
+
+  .se-empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    line-height: 1.65;
+  }
+  .se-empty a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .se-empty a:hover { text-decoration: underline; }
+
+  /* ── Editor ── */
+  .editor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .editor-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: var(--text-dim);
+  }
+  .editor-empty-icon {
+    width: 52px; height: 52px;
+    border: 1px solid var(--border2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.45;
+    font-size: 1.3rem;
+  }
+  .editor-empty p { font-size: 0.8rem; }
+
+  .editor-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .editor-toolbar {
+    padding: 0.7rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .editor-toolbar-info {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+  }
+  .editor-toolbar-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .editor-toolbar-name {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+  .editor-toolbar-color {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+
+  .btn-save {
+    padding: 0.32rem 0.85rem;
+    background: var(--gold);
+    color: #0D0F14;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-save:hover { background: #d9b85c; }
+  .btn-del {
+    padding: 0.32rem 0.75rem;
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-del:hover { border-color: var(--crimson-l); color: var(--crimson-l); }
+
+  .editor-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem 2.5rem;
+    max-width: 680px;
+    width: 100%;
+  }
+  .editor-scroll::-webkit-scrollbar { width: 4px; }
+  .editor-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.4rem; }
+  .field label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .field-hint {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    margin-top: 0.2rem;
+    line-height: 1.5;
+  }
+  textarea.desc-area {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 0.65rem 0.8rem;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    outline: none;
+    resize: vertical;
+    min-height: 140px;
+    width: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  textarea.desc-area:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+  }
+  textarea.desc-area::placeholder { color: var(--text-dim); }
+
+  /* Preview badge */
+  .preview-section { margin-top: 0.5rem; }
+  .preview-section label { display: block; margin-bottom: 0.5rem; }
+  .preview-badge-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+  }
+  .preview-badge { font-weight: 700; }
+  .preview-badge.color-default { color: #12100A; background: rgba(160,170,184,.15); border-radius: 3px; padding: 0 4px; }
+  .preview-badge.color-red     { color: #c53030; background: rgba(220,80,80,.12);   border-radius: 3px; padding: 0 4px; }
+  .preview-badge.color-orange  { color: #b85020; background: rgba(220,110,40,.12);  border-radius: 3px; padding: 0 4px; }
+  .preview-badge.color-yellow  { color: #8a6c00; background: rgba(210,175,0,.12);   border-radius: 3px; padding: 0 4px; }
+  .preview-appears-on {
+    margin-top: 1rem;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+  .preview-appears-on span {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 2px 7px;
+    margin: 2px 2px 0;
+    color: var(--text);
+    font-size: 0.7rem;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: var(--gold); color: #0D0F14;
+    padding: 0.5rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.78rem; font-weight: 600;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+    opacity: 0; transition: all 0.25s ease;
+    z-index: 999; pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-crest" aria-hidden="true">
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="22,4 28,18 44,18 32,28 36,42 22,34 8,42 12,28 0,18 16,18"
+               fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="22" cy="22" r="6" fill="none" stroke="#c9a84c" stroke-width="1"/>
+    </svg>
+  </div>
+  <h1>Kenosis <span>Status Effects</span></h1>
+  <nav class="header-nav">
+    <a href="./card-forge.html">Card Planner</a>
+    <a href="./lore.html">Lore</a>
+    <a href="./status-effects.html" class="active">Status Effects</a>
+  </nav>
+  <div class="header-right">
+    <span id="headerUser"></span>
+    <button onclick="signOut()">Sign out</button>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <h2>Effects</h2>
+      <span class="se-count" id="seCount">0</span>
+    </div>
+    <div class="se-list" id="seList"></div>
+  </aside>
+
+  <!-- EDITOR -->
+  <div class="editor" id="editorPanel">
+
+    <div class="editor-empty" id="editorEmpty">
+      <div class="editor-empty-icon">⚡</div>
+      <p>Select a status effect to edit its description</p>
+      <p style="font-size:0.72rem; margin-top:0.3rem">
+        Effects are created automatically when you bold<br>text in the Card Planner.
+      </p>
+    </div>
+
+    <div class="editor-form" id="editorForm" style="display:none">
+      <div class="editor-toolbar">
+        <div class="editor-toolbar-info">
+          <div class="editor-toolbar-dot" id="toolbarDot"></div>
+          <span class="editor-toolbar-name" id="toolbarName"></span>
+          <span class="editor-toolbar-color" id="toolbarColor"></span>
+        </div>
+        <button class="btn-del" onclick="deleteEffect()">Remove</button>
+        <button class="btn-save" onclick="saveEffect()">Save</button>
+      </div>
+      <div class="editor-scroll">
+
+        <div class="field preview-section">
+          <label>Preview</label>
+          <div class="preview-badge-wrap">
+            <span class="preview-badge" id="previewBadge"></span>
+            — hover over bold keywords in cards to show its description
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <textarea class="desc-area" id="seDesc"
+            placeholder="Describe what this status effect does…&#10;e.g. Burning: take 2 damage at the start of each turn."></textarea>
+          <p class="field-hint">This text appears as a tooltip when hovering over the bolded keyword on any card.</p>
+        </div>
+
+        <div class="field" id="appearsOnField">
+          <label>Appears on</label>
+          <div class="preview-appears-on" id="appearsOn"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ── Supabase ── */
+const SB_URL = 'https://efprarpfgwiihrbwgxhz.supabase.co';
+const SB_KEY = 'sb_publishable_xx51FbZeklVxb8subL8fNQ_gVMQogIl';
+
+function sbHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Prefer': 'return=representation'
+  };
+}
+
+/* ── Auth ── */
+function getSession() {
+  try { return JSON.parse(sessionStorage.getItem('kenosis_session') || 'null'); } catch(e) { return null; }
+}
+function signOut() {
+  sessionStorage.removeItem('kenosis_session');
+  window.location.replace('./index.html');
+}
+(function initHeader() {
+  const s = getSession();
+  const el = document.getElementById('headerUser');
+  if (el && s) el.textContent = s.guest ? 'Guest' : (s.name || s.email);
+})();
+
+/* ── Colour map ── */
+const KW_COLOR_HEX = { default:'#a0aab8', red:'#e05555', orange:'#e07030', yellow:'#d4b832' };
+const KW_COLOR_LABEL = { default:'Default', red:'Red', orange:'Orange', yellow:'Yellow' };
+
+/* ── State ── */
+let statusEffects = [];
+let cards         = [];
+let currentId     = null;
+
+function seKey(text, color) { return `${text.trim().toLowerCase()}|${color || 'default'}`; }
+
+/* ── Load ── */
+async function loadData() {
+  const session = getSession();
+
+  // Load status effects
+  if (!session || session.guest) {
+    try { statusEffects = JSON.parse(localStorage.getItem('kenosis_se_guest') || '[]'); } catch(e) { statusEffects = []; }
+  } else {
+    try {
+      const res = await fetch(
+        `${SB_URL}/rest/v1/status_effects?user_id=eq.${session.id}&select=effect_data`,
+        { headers: sbHeaders() }
+      );
+      if (!res.ok) throw new Error();
+      statusEffects = (await res.json()).map(r => r.effect_data);
+    } catch(e) {
+      try { statusEffects = JSON.parse(localStorage.getItem('kenosis_se_' + session.id) || '[]'); } catch(_) { statusEffects = []; }
+    }
+  }
+
+  // Load cards (to show "appears on")
+  if (!session || session.guest) {
+    try { cards = JSON.parse(localStorage.getItem('kenosis_cards_guest') || '[]'); } catch(e) { cards = []; }
+  } else {
+    try {
+      const res = await fetch(
+        `${SB_URL}/rest/v1/cards?user_id=eq.${session.id}&select=card_data`,
+        { headers: sbHeaders() }
+      );
+      if (!res.ok) throw new Error();
+      cards = (await res.json()).map(r => r.card_data);
+    } catch(e) {
+      try { cards = JSON.parse(localStorage.getItem('kenosis_cards_' + session.id) || '[]'); } catch(_) { cards = []; }
+    }
+  }
+}
+
+/* ── Persist ── */
+async function persistStatusEffects() {
+  const session = getSession();
+  if (!session || session.guest) {
+    try { localStorage.setItem('kenosis_se_guest', JSON.stringify(statusEffects)); } catch(e) {}
+    return;
+  }
+  try {
+    await fetch(`${SB_URL}/rest/v1/status_effects?user_id=eq.${session.id}`, {
+      method: 'DELETE', headers: sbHeaders()
+    });
+    if (statusEffects.length) {
+      await fetch(`${SB_URL}/rest/v1/status_effects`, {
+        method: 'POST',
+        headers: sbHeaders(),
+        body: JSON.stringify(statusEffects.map(e => ({ user_id: session.id, effect_data: e })))
+      });
+    }
+  } catch(e) {
+    try { localStorage.setItem('kenosis_se_' + session.id, JSON.stringify(statusEffects)); } catch(_) {}
+  }
+}
+
+/* ── Parse card desc ── */
+function parseKeywords(raw) {
+  const re = /\*([^*|]+?)(?:\|(default|red|orange|yellow))?\*/g;
+  const out = []; let m;
+  while ((m = re.exec(raw)) !== null) {
+    out.push({ text: m[1], color: m[2] || 'default' });
+  }
+  return out;
+}
+
+/* ── Render sidebar ── */
+function renderList() {
+  const list = document.getElementById('seList');
+  document.getElementById('seCount').textContent = statusEffects.length;
+
+  if (!statusEffects.length) {
+    list.innerHTML = `<div class="se-empty">
+      No status effects yet.<br><br>
+      Bold a word in the <a href="./card-forge.html">Card Planner</a><br>
+      and save the card — it will appear here.
+    </div>`;
+    return;
+  }
+
+  // Sort alphabetically
+  const sorted = [...statusEffects].sort((a, b) => a.text.localeCompare(b.text));
+
+  list.innerHTML = '';
+  sorted.forEach(se => {
+    const item = document.createElement('div');
+    item.className = 'se-item' + (se.id === currentId ? ' active' : '');
+    item.onclick = () => openEffect(se.id);
+
+    const dot = document.createElement('div');
+    dot.className = 'se-dot';
+    dot.style.background = KW_COLOR_HEX[se.color] || KW_COLOR_HEX.default;
+
+    const name = document.createElement('div');
+    name.className = 'se-item-name';
+    name.textContent = se.text;
+
+    const colorLabel = document.createElement('div');
+    colorLabel.className = 'se-item-color-label';
+    colorLabel.textContent = KW_COLOR_LABEL[se.color] || se.color;
+
+    const badge = document.createElement('div');
+    badge.className = 'se-item-desc-badge' + (se.desc ? ' has-desc' : '');
+    badge.title = se.desc ? 'Has description' : 'No description yet';
+
+    item.appendChild(dot);
+    item.appendChild(name);
+    item.appendChild(colorLabel);
+    item.appendChild(badge);
+    list.appendChild(item);
+  });
+}
+
+/* ── Open effect ── */
+function openEffect(id) {
+  currentId = id;
+  const se = statusEffects.find(s => s.id === id);
+  if (!se) return;
+
+  document.getElementById('editorEmpty').style.display = 'none';
+  document.getElementById('editorForm').style.display  = '';
+
+  // Toolbar
+  document.getElementById('toolbarDot').style.background = KW_COLOR_HEX[se.color] || KW_COLOR_HEX.default;
+  document.getElementById('toolbarName').textContent = se.text;
+  document.getElementById('toolbarColor').textContent = KW_COLOR_LABEL[se.color] || se.color;
+
+  // Preview badge
+  const badge = document.getElementById('previewBadge');
+  badge.textContent = se.text;
+  badge.className = `preview-badge color-${se.color}`;
+
+  // Description
+  document.getElementById('seDesc').value = se.desc || '';
+
+  // Appears on
+  const cardsWithThis = cards.filter(card => {
+    const kws = parseKeywords(card.desc || '');
+    return kws.some(k => seKey(k.text, k.color) === id);
+  });
+  const appearsOn = document.getElementById('appearsOn');
+  if (cardsWithThis.length) {
+    appearsOn.innerHTML = cardsWithThis.map(c => `<span>${escHtml(c.name)}</span>`).join('');
+  } else {
+    appearsOn.innerHTML = '<span style="opacity:0.5">Not used on any cards yet</span>';
+  }
+
+  renderList();
+}
+
+/* ── Save ── */
+async function saveEffect() {
+  const idx = statusEffects.findIndex(s => s.id === currentId);
+  if (idx === -1) return;
+  statusEffects[idx].desc = document.getElementById('seDesc').value.trim();
+  toast('Saving…');
+  await persistStatusEffects();
+  renderList();
+  // Re-open to refresh badge
+  openEffect(currentId);
+  toast('Saved');
+}
+
+/* ── Delete ── */
+async function deleteEffect() {
+  if (!confirm('Remove this status effect? This won\'t affect your cards, but the tooltip will disappear.')) return;
+  statusEffects = statusEffects.filter(s => s.id !== currentId);
+  toast('Removing…');
+  await persistStatusEffects();
+  currentId = null;
+  document.getElementById('editorEmpty').style.display = '';
+  document.getElementById('editorForm').style.display  = 'none';
+  renderList();
+  toast('Removed');
+}
+
+/* ── Util ── */
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+let _toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// Keyboard shortcut: Ctrl/Cmd+S to save
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's' && currentId) {
+    e.preventDefault();
+    saveEffect();
+  }
+});
+
+/* ── Init ── */
+(async function init() {
+  await loadData();
+  renderList();
+})();
+</script>
+</body>
+</html>
