@@ -93,6 +93,23 @@
     transition: all 0.15s;
   }
   .header-signout button:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .header-nav {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: 1.5rem;
+  }
+  .header-nav a {
+    padding: 0.28rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .header-nav a:hover { color: var(--text); background: var(--surface2); }
+  .header-nav a.active { color: var(--gold); border-color: var(--border2); background: var(--surface2); }
 
   /* ── Main layout ── */
   main { flex: 1; display: grid; grid-template-columns: 360px 1fr; gap: 0; min-height: 0; }
@@ -398,6 +415,10 @@
     </svg>
   </div>
   <h1>Kenosis <span>Card Planner</span></h1>
+  <nav class="header-nav">
+    <a href="./card-forge.html" class="active">Card Planner</a>
+    <a href="./lore.html">Lore</a>
+  </nav>
   <div class="header-signout">
     <span id="headerUser"></span>
     <button onclick="signOut()">Sign out</button>
