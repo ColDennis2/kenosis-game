@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg:        #0D0F14;
     --surface:   #13161D;
@@ -21,456 +20,257 @@
     --text:      #C8D0DC;
     --text-dim:  #5C6880;
   }
-
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg); color: var(--text);
     font-family: 'Inter', system-ui, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
+    min-height: 100vh; display: flex; flex-direction: column; font-size: 14px;
   }
 
   /* ── Header ── */
   header {
-    padding: 0.7rem 2rem;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    position: relative;
-    flex-shrink: 0;
+    padding: 0.7rem 2rem; border-bottom: 1px solid var(--border);
+    background: var(--surface); display: flex; align-items: center;
+    gap: 1rem; position: relative; flex-shrink: 0;
   }
   header::after {
-    content: '';
-    position: absolute;
-    bottom: -1px; left: 10%; right: 10%; height: 1px;
+    content: ''; position: absolute; bottom: -1px; left: 10%; right: 10%; height: 1px;
     background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
   }
   .header-crest {
-    width: 36px; height: 36px;
-    border: 1px solid rgba(201,168,76,0.5);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
+    width: 36px; height: 36px; border: 1px solid rgba(201,168,76,0.5); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
   }
   .header-crest svg { width: 18px; height: 18px; }
-  header h1 {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.06em;
-    color: var(--gold);
-  }
-  header h1 span {
-    font-weight: 400;
-    color: var(--text-dim);
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-left: 0.5rem;
-  }
-  .header-nav {
-    display: flex;
-    gap: 0.25rem;
-    margin-left: 1.5rem;
-  }
+  header h1 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.06em; color: var(--gold); }
+  header h1 span { font-weight: 400; color: var(--text-dim); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; margin-left: 0.5rem; }
+  .header-nav { display: flex; gap: 0.25rem; margin-left: 1.5rem; }
   .header-nav a {
-    padding: 0.28rem 0.7rem;
-    border-radius: 4px;
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--text-dim);
-    text-decoration: none;
-    transition: all 0.15s;
-    border: 1px solid transparent;
+    padding: 0.28rem 0.7rem; border-radius: 4px; font-size: 0.72rem; font-weight: 500;
+    color: var(--text-dim); text-decoration: none; transition: all 0.15s; border: 1px solid transparent;
   }
   .header-nav a:hover { color: var(--text); background: var(--surface2); }
   .header-nav a.active { color: var(--gold); border-color: var(--border2); background: var(--surface2); }
-  .header-right {
-    margin-left: auto;
-    display: flex; align-items: center; gap: 0.5rem;
-    font-size: 0.72rem; color: var(--text-dim);
-  }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; color: var(--text-dim); }
   .header-right button {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 0.25rem 0.6rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.68rem;
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: all 0.15s;
+    background: none; border: 1px solid var(--border); border-radius: 4px; padding: 0.25rem 0.6rem;
+    font-size: 0.68rem; color: var(--text-dim); cursor: pointer; transition: all 0.15s;
   }
   .header-right button:hover { border-color: var(--gold-dim); color: var(--gold); }
 
   /* ── Layout ── */
-  .page { flex: 1; display: flex; gap: 0; min-height: 0; }
+  .page { flex: 1; display: flex; min-height: 0; overflow: hidden; }
 
   /* ── Sidebar ── */
   .sidebar {
-    width: 260px;
-    flex-shrink: 0;
-    border-right: 1px solid var(--border);
-    background: var(--surface);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    width: 260px; flex-shrink: 0; border-right: 1px solid var(--border);
+    background: var(--surface); display: flex; flex-direction: column; overflow: hidden;
   }
   .sidebar-header {
-    padding: 1rem 1.1rem 0.75rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    padding: 1rem 1.1rem 0.75rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
   }
-  .sidebar-header h2 {
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
+  .sidebar-header h2 { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
   .btn-add-entry {
-    display: flex; align-items: center; gap: 4px;
-    padding: 0.3rem 0.6rem;
-    background: var(--gold);
-    color: #0D0F14;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
+    display: flex; align-items: center; gap: 4px; padding: 0.3rem 0.6rem;
+    background: var(--gold); color: #0D0F14; border: none; border-radius: 4px;
+    font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
   }
   .btn-add-entry:hover { background: #d9b85c; }
-
-  .entry-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0.5rem;
-  }
+  .entry-list { flex: 1; overflow-y: auto; padding: 0.5rem; }
   .entry-list::-webkit-scrollbar { width: 4px; }
-  .entry-list::-webkit-scrollbar-track { background: transparent; }
   .entry-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
   .entry-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 0.65rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.15s;
-    border: 1px solid transparent;
-    margin-bottom: 2px;
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.65rem;
+    border-radius: 6px; cursor: pointer; transition: all 0.15s;
+    border: 1px solid transparent; margin-bottom: 2px; user-select: none;
   }
   .entry-item:hover { background: var(--surface2); }
   .entry-item.active { background: var(--surface2); border-color: var(--border2); }
   .entry-item.active .entry-item-title { color: var(--gold); }
+  .entry-item.dragging { opacity: 0.4; }
+  .entry-item.drag-over { border-color: var(--gold-dim) !important; background: rgba(201,168,76,0.05) !important; }
   .entry-item-icon {
-    width: 28px; height: 28px;
-    border-radius: 4px;
-    background: var(--border);
-    flex-shrink: 0;
-    overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.65rem;
-    color: var(--text-dim);
+    width: 28px; height: 28px; border-radius: 4px; background: var(--border);
+    flex-shrink: 0; overflow: hidden; display: flex; align-items: center;
+    justify-content: center; font-size: 0.65rem; color: var(--text-dim);
   }
   .entry-item-icon img { width: 100%; height: 100%; object-fit: cover; }
   .entry-item-body { flex: 1; min-width: 0; }
-  .entry-item-title {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .entry-item-sub {
-    font-size: 0.65rem;
-    color: var(--text-dim);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-top: 1px;
-  }
+  .entry-item-title { font-size: 0.78rem; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entry-item-sub { font-size: 0.65rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
   .entry-item-del {
-    flex-shrink: 0;
-    background: none; border: none;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-    cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 3px;
-    opacity: 0;
-    transition: all 0.15s;
+    flex-shrink: 0; background: none; border: none; color: var(--text-dim);
+    font-size: 0.8rem; cursor: pointer; padding: 2px 4px; border-radius: 3px;
+    opacity: 0; transition: all 0.15s;
   }
   .entry-item:hover .entry-item-del { opacity: 1; }
   .entry-item-del:hover { color: var(--crimson); background: rgba(139,46,46,0.15); }
-
-  .sidebar-empty {
-    padding: 2rem 1rem;
-    text-align: center;
-    color: var(--text-dim);
-    font-size: 0.75rem;
-    line-height: 1.6;
-  }
+  .sidebar-empty { padding: 2rem 1rem; text-align: center; color: var(--text-dim); font-size: 0.75rem; line-height: 1.6; }
 
   /* ── Editor panel ── */
-  .editor {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
+  .editor { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
   .editor-empty {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    color: var(--text-dim);
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 0.75rem; color: var(--text-dim);
   }
   .editor-empty-icon {
-    width: 52px; height: 52px;
-    border: 1px solid var(--border2);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0.5;
+    width: 52px; height: 52px; border: 1px solid var(--border2); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; opacity: 0.5;
   }
   .editor-empty p { font-size: 0.8rem; }
+  .editor-form { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-  .editor-form {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
+  /* ── Toolbar ── */
   .editor-toolbar {
-    padding: 0.75rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: var(--surface);
-    flex-shrink: 0;
+    padding: 0.6rem 1.2rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.5rem;
+    background: var(--surface); flex-shrink: 0; flex-wrap: wrap;
   }
-  .editor-toolbar-title {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    flex: 1;
+  .editor-toolbar-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+  .toolbar-sep { width: 1px; height: 18px; background: var(--border2); flex-shrink: 0; }
+  .toolbar-btn {
+    padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid transparent;
+    background: none; color: var(--text-dim); cursor: pointer;
+    font-size: 0.78rem; font-family: 'Inter', sans-serif;
+    transition: all 0.13s; line-height: 1; white-space: nowrap;
   }
+  .toolbar-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+  .toolbar-btn.active { background: rgba(201,168,76,0.12); color: var(--gold); border-color: var(--gold-dim); }
+  .toolbar-btn b { font-weight: 800; }
+  .toolbar-btn i { font-style: italic; }
+  .toolbar-btn u { text-decoration: underline; }
+
+  /* Color swatches in toolbar */
+  .color-swatch {
+    width: 16px; height: 16px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: transform 0.13s, border-color 0.13s; flex-shrink: 0;
+  }
+  .color-swatch:hover { transform: scale(1.2); }
+  .color-swatch.selected { border-color: #fff; }
+  .color-swatch-clear {
+    width: 16px; height: 16px; border-radius: 50%; cursor: pointer;
+    border: 2px solid var(--border2); background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--text-dim); transition: all 0.13s; flex-shrink: 0;
+  }
+  .color-swatch-clear:hover { border-color: var(--text-dim); color: var(--text); }
+  .color-picker-wrap {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--border2); background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+    cursor: pointer; position: relative; flex-shrink: 0; transition: transform 0.13s;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .color-picker-wrap:hover { transform: scale(1.2); border-color: #fff; }
+  .color-picker-wrap svg { position: absolute; opacity: 0; pointer-events: none; }
+  .color-picker-wrap input[type="color"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    width: 100%; height: 100%; padding: 0; border: none;
+  }
+
+  .toolbar-right { margin-left: auto; display: flex; gap: 0.4rem; }
   .btn-save {
-    padding: 0.32rem 0.85rem;
-    background: var(--gold);
-    color: #0D0F14;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
+    padding: 0.32rem 0.85rem; background: var(--gold); color: #0D0F14;
+    border: none; border-radius: 4px; font-size: 0.72rem; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
   }
   .btn-save:hover { background: #d9b85c; }
   .btn-discard {
-    padding: 0.32rem 0.75rem;
-    background: transparent;
-    color: var(--text-dim);
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    font-size: 0.72rem;
-    cursor: pointer;
-    transition: all 0.15s;
+    padding: 0.32rem 0.75rem; background: transparent; color: var(--text-dim);
+    border: 1px solid var(--border2); border-radius: 4px; font-size: 0.72rem;
+    cursor: pointer; transition: all 0.15s;
   }
-  .btn-discard:hover { border-color: var(--border2); color: var(--text); }
+  .btn-discard:hover { color: var(--text); }
 
+  /* ── Rich editor area ── */
   .editor-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 2rem 2.5rem;
-    max-width: 780px;
-    width: 100%;
-    margin: 0 auto;
+    flex: 1; overflow-y: auto; padding: 2rem 2.5rem;
+    max-width: 780px; width: 100%; margin: 0 auto;
   }
   .editor-scroll::-webkit-scrollbar { width: 4px; }
   .editor-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-  /* Fields */
   .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem; }
-  .field label {
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
-  .field input[type="text"], .field textarea {
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 6px;
-    padding: 0.6rem 0.8rem;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.875rem;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    width: 100%;
-    resize: vertical;
-  }
-  .field input[type="text"]:focus, .field textarea:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
-  }
-  .field input[type="text"]::placeholder, .field textarea::placeholder { color: var(--text-dim); }
-  .field textarea { min-height: 160px; line-height: 1.65; }
+  .field label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
 
-  .field-title-input {
-    font-size: 1.35rem !important;
-    font-weight: 600 !important;
-    font-family: 'Cinzel', serif !important;
-    letter-spacing: 0.04em !important;
-    color: var(--gold) !important;
+  /* Contenteditable fields */
+  .rich-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.35rem; font-weight: 600; color: var(--gold);
+    letter-spacing: 0.04em;
+    outline: none; border: 1px solid var(--border2); border-radius: 6px;
+    padding: 0.55rem 0.8rem; background: var(--surface);
+    min-height: 2.5rem; cursor: text;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
+  .rich-title:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+  .rich-title:empty::before { content: attr(data-placeholder); color: var(--text-dim); font-weight: 400; }
+
+  .rich-body {
+    outline: none; border: 1px solid var(--border2); border-radius: 6px;
+    padding: 0.7rem 0.85rem; background: var(--surface);
+    min-height: 200px; cursor: text; line-height: 1.75;
+    font-size: 0.9rem; color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .rich-body:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+  .rich-body:empty::before { content: attr(data-placeholder); color: var(--text-dim); }
 
   /* Image upload */
   .img-upload-wrap {
-    position: relative;
-    border: 1px dashed var(--border2);
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: border-color 0.15s;
-    min-height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative; border: 1px dashed var(--border2); border-radius: 8px;
+    overflow: hidden; cursor: pointer; transition: border-color 0.15s;
+    min-height: 140px; display: flex; align-items: center; justify-content: center;
     background: var(--surface);
   }
   .img-upload-wrap:hover { border-color: var(--gold-dim); }
-  .img-upload-wrap input[type="file"] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-  }
-  .img-upload-placeholder {
-    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-    color: var(--text-dim); font-size: 0.75rem; pointer-events: none;
-  }
+  .img-upload-wrap input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .img-upload-placeholder { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: var(--text-dim); font-size: 0.75rem; pointer-events: none; }
   .img-upload-placeholder svg { opacity: 0.4; }
-  .img-preview {
-    width: 100%; max-height: 300px;
-    object-fit: cover;
-    display: none;
-  }
+  .img-preview { width: 100%; max-height: 280px; object-fit: cover; display: none; }
   .img-preview.visible { display: block; }
   .img-clear {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(13,15,20,0.75);
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    color: var(--text-dim);
-    font-size: 0.68rem;
-    padding: 3px 7px;
-    cursor: pointer;
-    display: none;
-    transition: all 0.15s;
-    z-index: 2;
+    position: absolute; top: 8px; right: 8px; background: rgba(13,15,20,0.75);
+    border: 1px solid var(--border2); border-radius: 4px; color: var(--text-dim);
+    font-size: 0.68rem; padding: 3px 7px; cursor: pointer; display: none; transition: all 0.15s; z-index: 2;
   }
   .img-clear:hover { color: var(--crimson); }
   .img-clear.visible { display: block; }
 
   /* ── Read view ── */
   .read-view {
-    flex: 1;
-    overflow-y: auto;
-    padding: 2.5rem 2.5rem;
-    max-width: 780px;
-    width: 100%;
-    margin: 0 auto;
+    flex: 1; overflow-y: auto; padding: 2.5rem;
+    max-width: 780px; width: 100%; margin: 0 auto;
   }
   .read-view::-webkit-scrollbar { width: 4px; }
   .read-view::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
   .read-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--gold);
-    letter-spacing: 0.04em;
-    margin-bottom: 0.3rem;
-    line-height: 1.2;
+    font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 700;
+    color: var(--gold); letter-spacing: 0.04em; margin-bottom: 0.3rem; line-height: 1.2;
   }
-  .read-divider {
-    height: 1px;
-    background: linear-gradient(90deg, var(--gold-dim), transparent);
-    margin: 1rem 0 1.5rem;
-  }
-  .read-image {
-    width: 100%;
-    max-height: 340px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    margin-bottom: 1.5rem;
-    display: none;
-  }
+  .read-divider { height: 1px; background: linear-gradient(90deg, var(--gold-dim), transparent); margin: 1rem 0 1.5rem; }
+  .read-image { width: 100%; max-height: 340px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 1.5rem; display: none; }
   .read-image.visible { display: block; }
-  .read-body {
-    font-size: 0.9rem;
-    line-height: 1.8;
-    color: var(--text);
-    white-space: pre-wrap;
-  }
-  .read-actions {
-    margin-top: 2rem;
-    display: flex;
-    gap: 0.5rem;
-  }
+  .read-body { font-size: 0.9rem; line-height: 1.8; color: var(--text); }
+  .read-body b { font-weight: 700; }
+  .read-body i { font-style: italic; }
+  .read-body u { text-decoration: underline; }
+  .read-actions { margin-top: 2rem; display: flex; gap: 0.5rem; }
   .btn-edit {
-    padding: 0.35rem 0.85rem;
-    background: var(--surface2);
-    color: var(--text-dim);
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    font-size: 0.72rem;
-    cursor: pointer;
-    transition: all 0.15s;
+    padding: 0.35rem 0.85rem; background: var(--surface2); color: var(--text-dim);
+    border: 1px solid var(--border2); border-radius: 4px; font-size: 0.72rem;
+    cursor: pointer; transition: all 0.15s;
   }
   .btn-edit:hover { border-color: var(--gold-dim); color: var(--gold); }
 
   /* Toast */
   #toast {
-    position: fixed; bottom: 2rem; left: 50%;
-    transform: translateX(-50%) translateY(12px);
-    background: var(--gold); color: #0D0F14;
-    padding: 0.5rem 1.2rem;
-    border-radius: 100px;
-    font-size: 0.78rem; font-weight: 600;
-    box-shadow: 0 4px 20px rgba(201,168,76,0.3);
-    opacity: 0; transition: all 0.25s ease;
-    z-index: 999; pointer-events: none;
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(12px);
+    background: var(--gold); color: #0D0F14; padding: 0.5rem 1.2rem; border-radius: 100px;
+    font-size: 0.78rem; font-weight: 600; box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+    opacity: 0; transition: all 0.25s ease; z-index: 999; pointer-events: none;
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* Drag handle */
-  .entry-item { user-select: none; }
-  .entry-item.dragging { opacity: 0.4; }
-  .entry-item.drag-over { border-color: var(--gold-dim) !important; background: rgba(201,168,76,0.05) !important; }
-
-  @media (max-width: 640px) {
-    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
-    .page { flex-direction: column; }
-  }
 </style>
 </head>
 <body>
@@ -478,8 +278,7 @@
 <header>
   <div class="header-crest" aria-hidden="true">
     <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="22,4 28,18 44,18 32,28 36,42 22,34 8,42 12,28 0,18 16,18"
-               fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <polygon points="22,4 28,18 44,18 32,28 36,42 22,34 8,42 12,28 0,18 16,18" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
       <circle cx="22" cy="22" r="6" fill="none" stroke="#c9a84c" stroke-width="1"/>
     </svg>
   </div>
@@ -508,6 +307,7 @@
 
   <!-- EDITOR / VIEWER -->
   <div class="editor" id="editorPanel">
+
     <div class="editor-empty" id="editorEmpty">
       <div class="editor-empty-icon">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -519,16 +319,57 @@
 
     <!-- EDIT FORM -->
     <div class="editor-form" id="editorForm" style="display:none">
-      <div class="editor-toolbar">
-        <span class="editor-toolbar-title" id="editorToolbarLabel">New Entry</span>
-        <button class="btn-discard" onclick="discardEdit()">Discard</button>
-        <button class="btn-save" onclick="saveEntry()">Save</button>
+
+      <!-- Formatting toolbar -->
+      <div class="editor-toolbar" id="fmtToolbar">
+        <span class="editor-toolbar-title">Format</span>
+        <div class="toolbar-sep"></div>
+
+        <!-- Style buttons -->
+        <button class="toolbar-btn" id="btn-bold"      title="Bold (Ctrl+B)"      onmousedown="fmt(event,'bold')"><b>B</b></button>
+        <button class="toolbar-btn" id="btn-italic"    title="Italic (Ctrl+I)"    onmousedown="fmt(event,'italic')"><i>I</i></button>
+        <button class="toolbar-btn" id="btn-underline" title="Underline (Ctrl+U)" onmousedown="fmt(event,'underline')"><u>U</u></button>
+
+        <div class="toolbar-sep"></div>
+
+        <!-- Font size -->
+        <button class="toolbar-btn" id="btn-h1" title="Large heading"  onmousedown="fmtBlock(event,'H2')">H1</button>
+        <button class="toolbar-btn" id="btn-h2" title="Medium heading" onmousedown="fmtBlock(event,'H3')">H2</button>
+        <button class="toolbar-btn" id="btn-h3" title="Small heading"  onmousedown="fmtBlock(event,'H4')">H3</button>
+        <button class="toolbar-btn" id="btn-p"  title="Normal text"    onmousedown="fmtBlock(event,'P')">¶</button>
+
+        <div class="toolbar-sep"></div>
+
+        <!-- Colours -->
+        <div class="color-swatch" style="background:#C9A84C" title="Gold"    onmousedown="fmtColor(event,'#C9A84C')"></div>
+        <div class="color-swatch" style="background:#e05555" title="Red"     onmousedown="fmtColor(event,'#e05555')"></div>
+        <div class="color-swatch" style="background:#5ba4e8" title="Blue"    onmousedown="fmtColor(event,'#5ba4e8')"></div>
+        <div class="color-swatch" style="background:#5ecb7a" title="Green"   onmousedown="fmtColor(event,'#5ecb7a')"></div>
+        <div class="color-swatch" style="background:#c47de0" title="Purple"  onmousedown="fmtColor(event,'#c47de0')"></div>
+        <div class="color-swatch" style="background:#e0a050" title="Orange"  onmousedown="fmtColor(event,'#e0a050')"></div>
+        <div class="color-swatch" style="background:#C8D0DC" title="Default" onmousedown="fmtColor(event,'#C8D0DC')"></div>
+        <!-- Custom colour picker -->
+        <div class="color-picker-wrap" title="Custom colour" onmousedown="openPicker(event)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 8v8M8 12h8"/></svg>
+          <input type="color" id="colorPicker" tabindex="-1" onchange="applyPickerColor(this.value)">
+        </div>
+        <div class="color-swatch-clear" title="Remove colour" onmousedown="fmtColor(event,null)">✕</div>
+
+        <div class="toolbar-right">
+          <button class="btn-discard" onclick="discardEdit()">Discard</button>
+          <button class="btn-save"    onclick="saveEntry()">Save</button>
+        </div>
       </div>
+
       <div class="editor-scroll">
+        <!-- Rich title -->
         <div class="field">
           <label>Title</label>
-          <input type="text" id="f-title" class="field-title-input" placeholder="e.g. The First Age" maxlength="80">
+          <div id="f-title" class="rich-title" contenteditable="true"
+               data-placeholder="e.g. The First Age"></div>
         </div>
+
+        <!-- Image -->
         <div class="field">
           <label>Image</label>
           <div class="img-upload-wrap" id="imgWrap">
@@ -545,16 +386,19 @@
             </div>
           </div>
         </div>
+
+        <!-- Rich body -->
         <div class="field">
           <label>Text</label>
-          <textarea id="f-body" placeholder="Write the lore entry here…"></textarea>
+          <div id="f-body" class="rich-body" contenteditable="true"
+               data-placeholder="Write the lore entry here…"></div>
         </div>
       </div>
     </div>
 
     <!-- READ VIEW -->
     <div class="read-view" id="readView" style="display:none">
-      <h2 class="read-title" id="rv-title"></h2>
+      <div class="read-title" id="rv-title"></div>
       <div class="read-divider"></div>
       <img class="read-image" id="rv-image" alt="">
       <div class="read-body" id="rv-body"></div>
@@ -563,6 +407,7 @@
         <button class="btn-edit" onclick="deleteEntry(currentId)" style="color:var(--crimson)">✕ Delete</button>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -572,78 +417,125 @@
 /* ── Supabase ── */
 const SB_URL = 'https://efprarpfgwiihrbwgxhz.supabase.co';
 const SB_KEY = 'sb_publishable_xx51FbZeklVxb8subL8fNQ_gVMQogIl';
-
 function sbHeaders() {
-  return {
-    'Content-Type': 'application/json',
-    'apikey': SB_KEY,
-    'Authorization': 'Bearer ' + SB_KEY,
-    'Prefer': 'return=representation'
-  };
+  return { 'Content-Type':'application/json', 'apikey':SB_KEY, 'Authorization':'Bearer '+SB_KEY, 'Prefer':'return=representation' };
 }
 
 /* ── Auth ── */
-function getSession() {
-  try { return JSON.parse(sessionStorage.getItem('kenosis_session') || 'null'); } catch(e) { return null; }
-}
-function signOut() {
-  sessionStorage.removeItem('kenosis_session');
-  window.location.replace('./index.html');
-}
+function getSession() { try { return JSON.parse(sessionStorage.getItem('kenosis_session')||'null'); } catch(e) { return null; } }
+function signOut() { sessionStorage.removeItem('kenosis_session'); window.location.replace('./index.html'); }
 (function initHeader() {
-  const s = getSession();
-  const el = document.getElementById('headerUser');
+  const s = getSession(), el = document.getElementById('headerUser');
   if (el && s) el.textContent = s.guest ? 'Guest' : (s.name || s.email);
 })();
 
 /* ── State ── */
-let entries    = [];   // [{ id, title, body, image, order }]
-let currentId  = null;
-let editing    = false;
+let entries   = [];
+let currentId = null;
+let editing   = false;
 
-/* ── Supabase persistence ── */
+/* ── Formatting commands ── */
+// We use mousedown (not click) so the selection isn't lost before execCommand fires
+function fmt(e, cmd) {
+  e.preventDefault();
+  const active = document.activeElement;
+  if (!active || (!active.classList.contains('rich-body') && !active.classList.contains('rich-title'))) return;
+  document.execCommand(cmd, false, null);
+  updateToolbarState();
+}
+
+function fmtBlock(e, tag) {
+  e.preventDefault();
+  const active = document.activeElement;
+  if (!active || (!active.classList.contains('rich-body') && !active.classList.contains('rich-title'))) return;
+  document.execCommand('formatBlock', false, tag);
+  updateToolbarState();
+}
+
+function fmtColor(e, color) {
+  e.preventDefault();
+  const active = document.activeElement;
+  if (!active || (!active.classList.contains('rich-body') && !active.classList.contains('rich-title'))) return;
+  applyColor(color);
+}
+
+// Save selection before picker opens (clicking picker blurs the editor)
+let _savedRange = null;
+let _savedEditor = null;
+function openPicker(e) {
+  e.preventDefault();
+  const active = document.activeElement;
+  if (active && (active.classList.contains('rich-body') || active.classList.contains('rich-title'))) {
+    _savedEditor = active;
+    const sel = window.getSelection();
+    _savedRange = sel && sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+  }
+  // Let the native colour input open normally (don't preventDefault on the input itself)
+  document.getElementById('colorPicker').click();
+}
+
+function applyPickerColor(color) {
+  // Restore saved selection then apply colour
+  if (_savedRange && _savedEditor) {
+    _savedEditor.focus();
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(_savedRange);
+  }
+  applyColor(color);
+  _savedRange = null; _savedEditor = null;
+}
+
+function applyColor(color) {
+  document.execCommand('styleWithCSS', false, true);
+  document.execCommand('foreColor', false, color || 'inherit');
+  updateToolbarState();
+}
+
+function updateToolbarState() {
+  document.getElementById('btn-bold').classList.toggle('active',      document.queryCommandState('bold'));
+  document.getElementById('btn-italic').classList.toggle('active',    document.queryCommandState('italic'));
+  document.getElementById('btn-underline').classList.toggle('active', document.queryCommandState('underline'));
+}
+
+// Track selection changes to keep toolbar state in sync
+document.addEventListener('selectionchange', updateToolbarState);
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (!e.ctrlKey && !e.metaKey) return;
+  const key = e.key.toLowerCase();
+  if (key === 's' && editing) { e.preventDefault(); saveEntry(); }
+});
+
+/* ── Persistence ── */
 async function loadEntries() {
   const s = getSession();
   if (!s || s.guest) {
-    try { entries = JSON.parse(localStorage.getItem('kenosis_lore_guest') || '[]'); } catch(e) { entries = []; }
+    try { entries = JSON.parse(localStorage.getItem('kenosis_lore_guest')||'[]'); } catch(e) { entries = []; }
     return;
   }
   try {
-    const res = await fetch(
-      `${SB_URL}/rest/v1/lore_entries?user_id=eq.${s.id}&select=entry_data&order=entry_data->order.asc`,
-      { headers: sbHeaders() }
-    );
+    const res = await fetch(`${SB_URL}/rest/v1/lore_entries?user_id=eq.${s.id}&select=entry_data&order=entry_data->order.asc`, { headers: sbHeaders() });
     if (!res.ok) throw new Error();
-    const rows = await res.json();
-    entries = rows.map(r => r.entry_data);
+    entries = (await res.json()).map(r => r.entry_data);
   } catch(e) {
-    try { entries = JSON.parse(localStorage.getItem('kenosis_lore_' + s.id) || '[]'); } catch(_) { entries = []; }
+    try { entries = JSON.parse(localStorage.getItem('kenosis_lore_'+s.id)||'[]'); } catch(_) { entries=[]; }
   }
 }
 
 async function persistEntries() {
   const s = getSession();
-  if (!s || s.guest) {
-    try { localStorage.setItem('kenosis_lore_guest', JSON.stringify(entries)); } catch(e) {}
-    return;
-  }
+  if (!s || s.guest) { try { localStorage.setItem('kenosis_lore_guest', JSON.stringify(entries)); } catch(e) {} return; }
   try {
-    await fetch(`${SB_URL}/rest/v1/lore_entries?user_id=eq.${s.id}`, {
-      method: 'DELETE', headers: sbHeaders()
-    });
+    await fetch(`${SB_URL}/rest/v1/lore_entries?user_id=eq.${s.id}`, { method:'DELETE', headers:sbHeaders() });
     if (entries.length) {
-      await fetch(`${SB_URL}/rest/v1/lore_entries`, {
-        method: 'POST',
-        headers: sbHeaders(),
-        body: JSON.stringify(entries.map(e => ({ user_id: s.id, entry_data: e })))
-      });
+      await fetch(`${SB_URL}/rest/v1/lore_entries`, { method:'POST', headers:sbHeaders(), body:JSON.stringify(entries.map(e=>({user_id:s.id,entry_data:e}))) });
     }
-  } catch(e) {
-    try { localStorage.setItem('kenosis_lore_' + s.id, JSON.stringify(entries)); } catch(_) {}
-  }
+  } catch(e) { try { localStorage.setItem('kenosis_lore_'+s.id, JSON.stringify(entries)); } catch(_) {} }
 }
 
-/* ── Render sidebar ── */
+/* ── Sidebar ── */
 function renderList() {
   const list = document.getElementById('entryList');
   if (!entries.length) {
@@ -659,38 +551,26 @@ function renderList() {
 
     const icon = document.createElement('div');
     icon.className = 'entry-item-icon';
-    if (entry.image) {
-      const img = document.createElement('img');
-      img.src = entry.image;
-      icon.appendChild(img);
-    } else {
-      icon.textContent = entry.title?.[0]?.toUpperCase() || '?';
-    }
+    if (entry.image) { const img = document.createElement('img'); img.src = entry.image; icon.appendChild(img); }
+    else icon.textContent = (entry.titleText||entry.title||'?')[0]?.toUpperCase() || '?';
 
     const body = document.createElement('div');
     body.className = 'entry-item-body';
-    body.innerHTML = `
-      <div class="entry-item-title">${escHtml(entry.title || 'Untitled')}</div>
-      <div class="entry-item-sub">${escHtml((entry.body || '').slice(0, 48))}${(entry.body||'').length > 48 ? '…' : ''}</div>
-    `;
+    const titleText = entry.titleText || stripHtml(entry.title || '') || 'Untitled';
+    const bodyText  = entry.bodyText  || stripHtml(entry.body  || '');
+    body.innerHTML = `<div class="entry-item-title">${escHtml(titleText)}</div>
+      <div class="entry-item-sub">${escHtml(bodyText.slice(0,48))}${bodyText.length>48?'…':''}</div>`;
 
     const del = document.createElement('button');
-    del.className = 'entry-item-del';
-    del.textContent = '✕';
-    del.title = 'Delete entry';
+    del.className = 'entry-item-del'; del.textContent = '✕'; del.title = 'Delete';
     del.onclick = e => { e.stopPropagation(); deleteEntry(entry.id); };
 
-    item.appendChild(icon);
-    item.appendChild(body);
-    item.appendChild(del);
+    item.appendChild(icon); item.appendChild(body); item.appendChild(del);
     item.onclick = () => openEntry(entry.id);
-
-    // Drag to reorder
     item.addEventListener('dragstart', onDragStart);
     item.addEventListener('dragover',  onDragOver);
     item.addEventListener('drop',      onDrop);
     item.addEventListener('dragend',   onDragEnd);
-
     list.appendChild(item);
   });
 }
@@ -699,177 +579,158 @@ function renderList() {
 let dragId = null;
 function onDragStart(e) { dragId = e.currentTarget.dataset.id; e.currentTarget.classList.add('dragging'); }
 function onDragOver(e)  { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
-function onDragEnd(e)   { e.currentTarget.classList.remove('dragging'); document.querySelectorAll('.entry-item').forEach(el => el.classList.remove('drag-over')); }
+function onDragEnd(e)   { e.currentTarget.classList.remove('dragging'); document.querySelectorAll('.entry-item').forEach(el=>el.classList.remove('drag-over')); }
 function onDrop(e) {
   e.preventDefault();
   const targetId = e.currentTarget.dataset.id;
   if (!dragId || dragId === targetId) return;
-  const from = entries.findIndex(x => x.id === dragId);
-  const to   = entries.findIndex(x => x.id === targetId);
-  const [moved] = entries.splice(from, 1);
-  entries.splice(to, 0, moved);
-  entries.forEach((x, i) => x.order = i);
-  renderList();
-  persistEntries();
+  const from = entries.findIndex(x=>x.id===dragId), to = entries.findIndex(x=>x.id===targetId);
+  const [moved] = entries.splice(from,1); entries.splice(to,0,moved);
+  entries.forEach((x,i)=>x.order=i); renderList(); persistEntries();
 }
 
 /* ── Open / view ── */
 function openEntry(id) {
   if (editing && !confirm('Discard unsaved changes?')) return;
-  editing = false;
-  currentId = id;
-  const entry = entries.find(e => e.id === id);
+  editing = false; currentId = id;
+  const entry = entries.find(e=>e.id===id);
   if (!entry) return;
 
   document.getElementById('editorEmpty').style.display = 'none';
   document.getElementById('editorForm').style.display  = 'none';
   document.getElementById('readView').style.display    = '';
 
-  document.getElementById('rv-title').textContent = entry.title || 'Untitled';
-  document.getElementById('rv-body').textContent  = entry.body  || '';
+  // Title — render as rich HTML
+  document.getElementById('rv-title').innerHTML = entry.title || escHtml(entry.titleText || 'Untitled');
+  // Body — render as rich HTML
+  document.getElementById('rv-body').innerHTML  = entry.body  || '';
+
   const img = document.getElementById('rv-image');
   if (entry.image) { img.src = entry.image; img.classList.add('visible'); }
   else             { img.src = ''; img.classList.remove('visible'); }
-
   renderList();
 }
 
 /* ── Edit ── */
-function editCurrent() {
-  const entry = entries.find(e => e.id === currentId);
-  if (!entry) return;
-  openEditForm(entry);
-}
+function editCurrent() { const e = entries.find(e=>e.id===currentId); if (e) openEditForm(e); }
 
 function openEditForm(entry) {
   editing = true;
   document.getElementById('editorEmpty').style.display = 'none';
   document.getElementById('readView').style.display    = 'none';
   document.getElementById('editorForm').style.display  = '';
-  document.getElementById('editorToolbarLabel').textContent = entry.id ? 'Edit Entry' : 'New Entry';
-  document.getElementById('f-title').value = entry.title || '';
-  document.getElementById('f-body').value  = entry.body  || '';
+
+  // Populate contenteditable fields with stored HTML
+  const titleEl = document.getElementById('f-title');
+  const bodyEl  = document.getElementById('f-body');
+  titleEl.innerHTML = entry.title || '';
+  bodyEl.innerHTML  = entry.body  || '';
+
   setImgPreview(entry.image || null);
+  titleEl.focus();
 }
 
 function discardEdit() {
   editing = false;
-  if (currentId) { openEntry(currentId); }
-  else { showEmpty(); }
+  if (currentId) openEntry(currentId); else showEmpty();
 }
 
 function showEmpty() {
   document.getElementById('editorEmpty').style.display = '';
   document.getElementById('editorForm').style.display  = 'none';
   document.getElementById('readView').style.display    = 'none';
-  currentId = null;
-  renderList();
+  currentId = null; renderList();
 }
 
 /* ── New ── */
 function newEntry() {
   if (editing && !confirm('Discard unsaved changes?')) return;
   currentId = null;
-  openEditForm({ title: '', body: '', image: null });
+  openEditForm({ title:'', body:'', image:null });
 }
 
 /* ── Save ── */
 async function saveEntry() {
-  const title = document.getElementById('f-title').value.trim();
-  const body  = document.getElementById('f-body').value.trim();
-  const image = document.getElementById('imgPreview').src || null;
-  const imgVisible = document.getElementById('imgPreview').classList.contains('visible');
+  const titleEl = document.getElementById('f-title');
+  const bodyEl  = document.getElementById('f-body');
 
-  if (!title) { document.getElementById('f-title').focus(); toast('Please add a title'); return; }
+  // Sanitise: allow only safe formatting tags, strip scripts/events
+  const titleHtml = sanitise(titleEl.innerHTML);
+  const bodyHtml  = sanitise(bodyEl.innerHTML);
+  const titleText = stripHtml(titleHtml).trim();
+
+  if (!titleText) { titleEl.focus(); toast('Please add a title'); return; }
+
+  const imgVisible = document.getElementById('imgPreview').classList.contains('visible');
+  const image = imgVisible ? document.getElementById('imgPreview').src : null;
 
   const isNew = !currentId;
   if (isNew) {
-    const entry = {
-      id: 'lore_' + Date.now(),
-      title, body,
-      image: imgVisible ? image : null,
-      order: entries.length
-    };
-    entries.push(entry);
-    currentId = entry.id;
+    const entry = { id:'lore_'+Date.now(), title:titleHtml, titleText, body:bodyHtml, bodyText:stripHtml(bodyHtml), image, order:entries.length };
+    entries.push(entry); currentId = entry.id;
   } else {
-    const idx = entries.findIndex(e => e.id === currentId);
-    if (idx !== -1) {
-      entries[idx] = { ...entries[idx], title, body, image: imgVisible ? image : null };
-    }
+    const idx = entries.findIndex(e=>e.id===currentId);
+    if (idx !== -1) entries[idx] = { ...entries[idx], title:titleHtml, titleText, body:bodyHtml, bodyText:stripHtml(bodyHtml), image };
   }
 
   toast('Saving…');
   await persistEntries();
-  editing = false;
-  renderList();
-  openEntry(currentId);
-  toast('Saved');
+  editing = false; renderList(); openEntry(currentId); toast('Saved');
 }
 
 /* ── Delete ── */
 async function deleteEntry(id) {
   if (!confirm('Delete this entry?')) return;
-  entries = entries.filter(e => e.id !== id);
-  entries.forEach((x, i) => x.order = i);
-  toast('Deleting…');
-  await persistEntries();
-  if (currentId === id) showEmpty();
-  renderList();
-  toast('Deleted');
+  entries = entries.filter(e=>e.id!==id); entries.forEach((x,i)=>x.order=i);
+  toast('Deleting…'); await persistEntries();
+  if (currentId === id) showEmpty(); renderList(); toast('Deleted');
 }
 
-/* ── Image handling ── */
+/* ── Image ── */
 function handleImg(input) {
-  const file = input.files[0];
-  if (!file) return;
+  const file = input.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = e => setImgPreview(e.target.result);
   reader.readAsDataURL(file);
 }
-
 function setImgPreview(src) {
-  const preview     = document.getElementById('imgPreview');
-  const placeholder = document.getElementById('imgPlaceholder');
-  const clear       = document.getElementById('imgClear');
-  if (src) {
-    preview.src = src;
-    preview.classList.add('visible');
-    placeholder.style.display = 'none';
-    clear.classList.add('visible');
-  } else {
-    preview.src = '';
-    preview.classList.remove('visible');
-    placeholder.style.display = '';
-    clear.classList.remove('visible');
-  }
+  const preview = document.getElementById('imgPreview');
+  const ph      = document.getElementById('imgPlaceholder');
+  const clear   = document.getElementById('imgClear');
+  if (src) { preview.src=src; preview.classList.add('visible'); ph.style.display='none'; clear.classList.add('visible'); }
+  else     { preview.src=''; preview.classList.remove('visible'); ph.style.display=''; clear.classList.remove('visible'); }
 }
+function clearImg(e) { e.stopPropagation(); document.getElementById('f-img').value=''; setImgPreview(null); }
 
-function clearImg(e) {
-  e.stopPropagation();
-  document.getElementById('f-img').value = '';
-  setImgPreview(null);
+/* ── Sanitise HTML (allow formatting, strip scripts) ── */
+function sanitise(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  // Remove script/style/event-handler nodes
+  tmp.querySelectorAll('script,style,[onclick],[onerror],[onload]').forEach(el=>el.remove());
+  // Strip dangerous attributes but keep style (for color), class, etc.
+  tmp.querySelectorAll('*').forEach(el => {
+    Array.from(el.attributes).forEach(attr => {
+      if (/^on/i.test(attr.name)) el.removeAttribute(attr.name);
+    });
+  });
+  return tmp.innerHTML;
 }
 
 /* ── Util ── */
-function escHtml(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function stripHtml(html) {
+  const tmp = document.createElement('div'); tmp.innerHTML = html; return tmp.textContent || '';
 }
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 let _toastTimer;
 function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+  const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(_toastTimer); _toastTimer = setTimeout(()=>el.classList.remove('show'), 2200);
 }
 
 /* ── Init ── */
-(async function init() {
-  await loadEntries();
-  renderList();
-})();
+(async function init() { await loadEntries(); renderList(); })();
 </script>
 </body>
 </html>
