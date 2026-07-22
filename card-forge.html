@@ -1142,7 +1142,18 @@ function migrateCards(arr) {
       const map = { fire:'crimson', water:'sky', nature:'lime', shadow:'indigo', light:'gold', neutral:'slate' };
       c.colorId = map[c.faction] || 'crimson';
     }
-    if (c.desc) c.desc = c.desc.replace(/\*([^*|]+)\*/g, '*$1|default*');
+    if (c.desc) {
+      const tokens = parseDesc(c.desc);
+      // Clean up stray "|default"/"|red"/"|orange"/"|yellow" left dangling in
+      // plain text by an earlier buggy migration (it could glue a color tag
+      // onto unrelated text between two separate keywords).
+      for (let i = 0; i < tokens.length; i++) {
+        if (tokens[i].type === 'text' && tokens[i + 1] && tokens[i + 1].type === 'kw') {
+          tokens[i].text = tokens[i].text.replace(/\|(default|red|orange|yellow)$/, '');
+        }
+      }
+      c.desc = tokensToRaw(tokens);
+    }
     return c;
   });
 }
@@ -1178,6 +1189,7 @@ async function loadCards() {
                || localStorage.getItem('kenosis_cards')
                || localStorage.getItem('cardforge_cards');
       cards = raw ? migrateCards(JSON.parse(raw)) : [];
+      if (raw) persistCards(); // save cleaned-up data back so it stays fixed
     } catch(e) { cards = []; }
     return;
   }
@@ -1189,6 +1201,7 @@ async function loadCards() {
     if (!res.ok) throw new Error('fetch failed');
     const rows = await res.json();
     cards = migrateCards(rows.map(r => r.card_data));
+    if (cards.length) persistCards(); // save cleaned-up data back so it stays fixed
   } catch(e) {
     console.warn('Could not load from Supabase, using local fallback:', e);
     try {
