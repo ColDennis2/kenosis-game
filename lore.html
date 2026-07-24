@@ -140,6 +140,7 @@
   .toolbar-btn b { font-weight: 800; }
   .toolbar-btn i { font-style: italic; }
   .toolbar-btn u { text-decoration: underline; }
+  .toolbar-btn s { text-decoration: line-through; }
 
   /* Color swatches in toolbar */
   .color-swatch {
@@ -255,6 +256,7 @@
   .read-body b { font-weight: 700; }
   .read-body i { font-style: italic; }
   .read-body u { text-decoration: underline; }
+  .read-body s, .read-body strike { text-decoration: line-through; }
   .read-actions { margin-top: 2rem; display: flex; gap: 0.5rem; }
   .btn-edit {
     padding: 0.35rem 0.85rem; background: var(--surface2); color: var(--text-dim);
@@ -329,6 +331,7 @@
         <button class="toolbar-btn" id="btn-bold"      title="Bold (Ctrl+B)"      onmousedown="fmt(event,'bold')"><b>B</b></button>
         <button class="toolbar-btn" id="btn-italic"    title="Italic (Ctrl+I)"    onmousedown="fmt(event,'italic')"><i>I</i></button>
         <button class="toolbar-btn" id="btn-underline" title="Underline (Ctrl+U)" onmousedown="fmt(event,'underline')"><u>U</u></button>
+        <button class="toolbar-btn" id="btn-strike"    title="Strikethrough (Ctrl+Shift+X)" onmousedown="fmt(event,'strikeThrough')"><s>S</s></button>
 
         <div class="toolbar-sep"></div>
 
@@ -496,6 +499,7 @@ function updateToolbarState() {
   document.getElementById('btn-bold').classList.toggle('active',      document.queryCommandState('bold'));
   document.getElementById('btn-italic').classList.toggle('active',    document.queryCommandState('italic'));
   document.getElementById('btn-underline').classList.toggle('active', document.queryCommandState('underline'));
+  document.getElementById('btn-strike').classList.toggle('active',    document.queryCommandState('strikeThrough'));
 }
 
 // Track selection changes to keep toolbar state in sync
@@ -506,6 +510,14 @@ document.addEventListener('keydown', e => {
   if (!e.ctrlKey && !e.metaKey) return;
   const key = e.key.toLowerCase();
   if (key === 's' && editing) { e.preventDefault(); saveEntry(); }
+  if (key === 'x' && e.shiftKey && editing) {
+    const active = document.activeElement;
+    if (active && (active.classList.contains('rich-body') || active.classList.contains('rich-title'))) {
+      e.preventDefault();
+      document.execCommand('strikeThrough', false, null);
+      updateToolbarState();
+    }
+  }
 });
 
 /* ── Persistence ── */
