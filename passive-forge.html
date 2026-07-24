@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="./auth-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kenosis — Passives</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0D0F14;
+    --surface:   #13161D;
+    --surface2:  #1A1E28;
+    --border:    #252B38;
+    --border2:   #313848;
+    --gold:      #C9A84C;
+    --gold-dim:  #8A6E2F;
+    --crimson:   #8B2E2E;
+    --crimson-l: #C04444;
+    --text:      #C8D0DC;
+    --text-dim:  #5C6880;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 0.7rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 10%; right: 10%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+  }
+  .header-crest {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(201,168,76,0.5);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+  .header-crest svg { width: 18px; height: 18px; }
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+  }
+  header h1 span {
+    font-weight: 400;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-left: 0.5rem;
+  }
+  .header-signout {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.72rem; color: var(--text-dim);
+  }
+  .header-signout button {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.25rem 0.6rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .header-signout button:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .header-nav {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: 1.5rem;
+  }
+  .header-nav a {
+    padding: 0.28rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .header-nav a:hover { color: var(--text); background: var(--surface2); }
+  .header-nav a.active { color: var(--gold); border-color: var(--border2); background: var(--surface2); }
+
+  /* ── Main layout ── */
+  main { flex: 1; display: grid; grid-template-columns: 360px 1fr; gap: 0; min-height: 0; }
+
+  /* ── Left panel ── */
+  .panel-form {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1.6rem 1.5rem;
+    display: flex; flex-direction: column; gap: 1.2rem;
+    overflow-y: auto;
+  }
+  .panel-form h2 { font-size: .7rem; font-weight: 600; letter-spacing: .08em; color: var(--text-dim); text-transform: uppercase; }
+
+  .field { display: flex; flex-direction: column; gap: .4rem; }
+  .field label { font-size: .7rem; font-weight: 500; letter-spacing: .04em; color: var(--text-dim); text-transform: uppercase; }
+  .field input, .field textarea, .field select {
+    background: var(--bg); border: 1px solid var(--border2); border-radius: 6px;
+    color: var(--text); font-family: 'Inter', sans-serif; font-size: .875rem;
+    padding: .5rem .7rem; transition: border-color .15s, box-shadow .15s; outline: none; resize: none;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.1);
+  }
+
+  /* ── Rich text editor for passive text (identical to Card Planner's) ── */
+  .desc-editor-wrap { display: flex; flex-direction: column; gap: .5rem; }
+  .desc-toolbar {
+    display: flex; align-items: center; gap: .4rem;
+    background: var(--bg); border: 1px solid var(--border2);
+    border-radius: 6px 6px 0 0; padding: .4rem .6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .desc-toolbar-label { font-size: .65rem; color: var(--text-dim); font-weight: 500; margin-right: .2rem; }
+  .kw-color-btn {
+    display: flex; align-items: center; gap: .3rem;
+    padding: .25rem .55rem; border-radius: 5px;
+    border: 1px solid var(--border2); background: transparent;
+    font-family: 'Inter', sans-serif; font-size: .72rem; font-weight: 600;
+    cursor: pointer; transition: all .13s; color: var(--text-dim);
+  }
+  .kw-color-btn .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .kw-color-btn:hover { border-color: rgba(255,255,255,.2); color: var(--text); }
+  .kw-color-btn.active { border-color: currentColor; }
+  .kw-color-btn[data-kwcolor="default"]  { color: #a0aab8; }
+  .kw-color-btn[data-kwcolor="red"]      { color: #e05555; }
+  .kw-color-btn[data-kwcolor="orange"]   { color: #e07030; }
+  .kw-color-btn[data-kwcolor="yellow"]   { color: #d4b832; }
+  .kw-color-btn.active[data-kwcolor="default"]  .dot { background: #a0aab8; }
+  .kw-color-btn.active[data-kwcolor="red"]      .dot { background: #e05555; }
+  .kw-color-btn.active[data-kwcolor="orange"]   .dot { background: #e07030; }
+  .kw-color-btn.active[data-kwcolor="yellow"]   .dot { background: #d4b832; }
+
+  .desc-hint { font-size: .67rem; color: var(--text-dim); line-height: 1.4; }
+  .desc-hint code { background: var(--surface2); border-radius: 3px; padding: .05rem .3rem; font-size: .65rem; font-family: monospace; }
+
+  .desc-live {
+    background: var(--bg); border: 1px solid var(--border2);
+    border-top: none; border-radius: 0 0 6px 6px;
+    min-height: 160px; padding: .55rem .7rem;
+    font-family: 'DM Sans', sans-serif; font-size: .875rem; line-height: 1.6;
+    color: var(--text); outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    word-break: break-word; position: relative;
+  }
+  .desc-live:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.1); }
+  .desc-live.empty::before { content: attr(data-placeholder); color: var(--text-dim); pointer-events: none; }
+  .desc-live .kw-tag {
+    display: inline-flex; align-items: center; gap: 2px;
+    border-radius: 4px; padding: 0 5px 0 4px;
+    font-weight: 700; cursor: default;
+    background: rgba(255,255,255,.07);
+    white-space: nowrap;
+    user-select: text;
+  }
+  .desc-live .kw-tag .kw-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; cursor: pointer;
+    transition: transform .12s;
+  }
+  .desc-live .kw-tag .kw-dot:hover { transform: scale(1.4); }
+  .desc-live .kw-tag[data-kwcolor="default"] { color: #1a1008; background: rgba(160,170,184,.15); }
+  .desc-live .kw-tag[data-kwcolor="red"]     { color: #c53030; background: rgba(220,80,80,.12); }
+  .desc-live .kw-tag[data-kwcolor="orange"]  { color: #b85020; background: rgba(220,110,40,.12); }
+  .desc-live .kw-tag[data-kwcolor="yellow"]  { color: #8a6c00; background: rgba(210,175,0,.12); }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: .5rem; margin-top: .3rem; }
+  .btn {
+    flex: 1; padding: .55rem; border-radius: 6px; border: none;
+    font-family: 'Inter', sans-serif; font-size: .78rem; font-weight: 600;
+    letter-spacing: .02em; cursor: pointer; transition: all .15s;
+  }
+  .btn-primary { background: var(--gold); color: #0D0F14; }
+  .btn-primary:hover { background: #d9b85c; box-shadow: 0 0 16px rgba(201,168,76,.35); }
+  .btn-secondary { background: var(--surface2); border: 1px solid var(--border2); color: var(--text-dim); }
+  .btn-secondary:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: .2rem 0; }
+
+  /* ── Right panel: passives collection ── */
+  .collection-section { padding: 1.8rem 2rem; flex: 1; overflow-y: auto; }
+  .collection-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.4rem; flex-wrap: wrap; }
+  .collection-header h2 { font-size: .7rem; font-weight: 600; letter-spacing: .08em; color: var(--text-dim); text-transform: uppercase; }
+  .collection-count { background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: .15rem .6rem; font-size: .72rem; color: var(--text-dim); font-weight: 500; }
+  .collection-actions { margin-left: auto; display: flex; gap: .4rem; }
+  .collection-filter-bar {
+    display: flex; align-items: center; gap: .6rem; margin-bottom: 1.4rem; flex-wrap: wrap;
+  }
+  .search-input {
+    flex: 1 1 240px; min-width: 180px;
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px;
+    color: var(--text); font-family: 'Inter', sans-serif; font-size: .82rem;
+    padding: .5rem .8rem; outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .search-input::placeholder { color: var(--text-dim); }
+  .search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.1); }
+  .filter-clear {
+    font-size: .7rem; font-weight: 600; color: var(--text-dim); background: none; border: none;
+    cursor: pointer; padding: .3rem .4rem; letter-spacing: .02em; transition: color .15s;
+  }
+  .filter-clear:hover { color: var(--gold); }
+  .btn-sm {
+    padding: .3rem .75rem; font-size: .7rem; font-weight: 600; flex: none;
+    border-radius: 6px; border: 1px solid var(--border2); background: var(--surface2);
+    color: var(--text-dim); font-family: 'Inter', sans-serif; letter-spacing: .02em; cursor: pointer; transition: all .15s;
+  }
+  .btn-sm:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+  .passive-list { display: flex; flex-direction: column; gap: 1rem; }
+  .passive-item {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 1rem 1.2rem; transition: border-color .15s;
+  }
+  .passive-item:hover { border-color: var(--border2); }
+  .passive-item-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: .55rem; }
+  .passive-title { font-family: 'Cinzel', serif; font-size: .95rem; font-weight: 600; color: var(--gold); letter-spacing: .02em; }
+  .passive-actions { display: flex; gap: .35rem; opacity: 0; transition: opacity .15s; flex-shrink: 0; }
+  .passive-item:hover .passive-actions { opacity: 1; }
+  .thumb-btn {
+    border: 1px solid var(--border2); background: var(--surface); border-radius: 5px;
+    padding: .22rem .5rem; font-size: .65rem; font-family: 'Inter', sans-serif;
+    font-weight: 500; cursor: pointer; color: var(--text-dim); transition: all .13s;
+  }
+  .thumb-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .thumb-btn.del:hover { border-color: var(--crimson-l); color: var(--crimson-l); }
+  .passive-body {
+    font-family: 'DM Sans', sans-serif; font-size: .85rem; line-height: 1.65;
+    color: var(--text); white-space: pre-wrap;
+  }
+  .passive-body .kw        { font-weight: 700; color: var(--text); }
+  .passive-body .kw-red    { font-weight: 700; color: #e05555; }
+  .passive-body .kw-orange { font-weight: 700; color: #e07030; }
+  .passive-body .kw-yellow { font-weight: 700; color: #d4b832; }
+  .kw-tip { cursor: help; }
+
+  .empty-state { text-align: center; padding: 3rem; color: var(--text-dim); font-size: .9rem; }
+  .empty-state strong { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .08em; color: var(--border2); margin-bottom: .4rem; text-transform: uppercase; }
+
+  /* Status effect tooltip (JS-positioned, lives at <body> level so it can
+     never be clipped by any overflow:hidden containers) */
+  .global-kw-tip {
+    position: fixed;
+    background: #1A1E28;
+    color: #C8D0DC;
+    font-size: 0.78rem;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #313848;
+    white-space: pre-wrap;
+    max-width: 260px;
+    text-align: left;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+  }
+  .global-kw-tip.show { opacity: 1; }
+
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: var(--gold); color: #0D0F14;
+    font-family: 'Inter', sans-serif; font-size: .78rem; font-weight: 600;
+    padding: .55rem 1.2rem; border-radius: 100px;
+    box-shadow: 0 4px 20px rgba(201,168,76,.35);
+    opacity: 0; transition: all .25s ease; pointer-events: none; white-space: nowrap; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+  @media (max-width: 860px) {
+    main { grid-template-columns: 1fr; }
+    .panel-form { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-crest" aria-hidden="true">
+    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="22,4 28,18 44,18 32,28 36,42 22,34 8,42 12,28 0,18 16,18"
+               fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="22" cy="22" r="6" fill="none" stroke="#c9a84c" stroke-width="1"/>
+    </svg>
+  </div>
+  <h1>Kenosis <span>Passives</span></h1>
+  <nav class="header-nav">
+    <a href="./card-forge.html">Card Planner</a>
+    <a href="./passive-forge.html" class="active">Passives</a>
+    <a href="./lore.html">Lore</a>
+    <a href="./status-effects.html">Status Effects</a>
+  </nav>
+  <div class="header-signout">
+    <span id="headerUser"></span>
+    <button onclick="signOut()">Sign out</button>
+  </div>
+</header>
+
+<main>
+  <!-- FORM PANEL -->
+  <div class="panel-form">
+    <h2 id="form-title">New Passive</h2>
+
+    <div class="field">
+      <label>Passive Title</label>
+      <input type="text" id="f-title" placeholder="e.g. Iron Resolve" maxlength="48">
+    </div>
+
+    <div class="field">
+      <label>Passive Text</label>
+      <div class="desc-editor-wrap">
+        <div class="desc-toolbar">
+          <span class="desc-toolbar-label">Bold color:</span>
+          <button class="kw-color-btn active" data-kwcolor="default">
+            <span class="dot" style="background:#a0aab8"></span> Default
+          </button>
+          <button class="kw-color-btn" data-kwcolor="red">
+            <span class="dot" style="background:#e05555"></span> Red
+          </button>
+          <button class="kw-color-btn" data-kwcolor="orange">
+            <span class="dot" style="background:#e07030"></span> Orange
+          </button>
+          <button class="kw-color-btn" data-kwcolor="yellow">
+            <span class="dot" style="background:#d4b832"></span> Yellow
+          </button>
+        </div>
+        <div class="desc-live" id="desc-live" contenteditable="true" spellcheck="false"
+             data-placeholder="Type passive text… Select a word and press * to make it bold, then click its dot to change color."></div>
+      </div>
+      <div class="desc-hint">
+        Select text → press <code>*</code> to toggle bold keyword · Press <code>*</code> again on a bold word to unbold · Click the <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#a0aab8;vertical-align:middle"></span> dot to cycle color · Backspace removes tags normally
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="savePassive()">+ Save Passive</button>
+      <button class="btn btn-secondary" onclick="resetForm()">↺ Reset</button>
+    </div>
+  </div>
+
+  <!-- COLLECTION -->
+  <div class="collection-section">
+    <div class="collection-header">
+      <h2>Passives</h2>
+      <span class="collection-count" id="passive-count">0 passives</span>
+      <div class="collection-actions">
+        <button class="btn-sm" onclick="exportPassives()">Export</button>
+        <button class="btn-sm" id="import-btn">Import</button>
+        <input type="file" id="import-file" accept="application/json" style="display:none">
+      </div>
+    </div>
+    <div class="collection-filter-bar">
+      <input type="text" id="search-input" class="search-input" placeholder="Search by title or passive text…" oninput="renderList()">
+      <button class="filter-clear" onclick="clearFilters()">Clear</button>
+    </div>
+    <div class="passive-list" id="passive-list"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════
+   KEYWORD COLOR TOOLBAR
+════════════════════════════════════════════ */
+const KW_COLORS = ['default','red','orange','yellow'];
+const KW_COLOR_HEX = { default:'#a0aab8', red:'#e05555', orange:'#e07030', yellow:'#d4b832' };
+let activeKwColor = 'default';
+
+document.querySelectorAll('.kw-color-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeKwColor = btn.dataset.kwcolor;
+    document.querySelectorAll('.kw-color-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+/* ════════════════════════════════════════════
+   RICH KEYWORD EDITOR (identical format/behavior to Card Planner)
+   Format stored as plain text: *word|color* or *word* (default)
+════════════════════════════════════════════ */
+const descLive = document.getElementById('desc-live');
+let editingId = null;
+let passives = [];
+
+function parseDesc(raw) {
+  const tokens = [];
+  const re = /\*([^*|]+?)(?:\|(default|red|orange|yellow))?\*/g;
+  let last = 0, m;
+  while ((m = re.exec(raw)) !== null) {
+    if (m.index > last) tokens.push({ type:'text', text: raw.slice(last, m.index) });
+    tokens.push({ type:'kw', text: m[1], color: m[2] || 'default' });
+    last = re.lastIndex;
+  }
+  if (last < raw.length) tokens.push({ type:'text', text: raw.slice(last) });
+  return tokens;
+}
+
+function tokensToRaw(tokens) {
+  return tokens.map(t => t.type === 'kw' ? `*${t.text}|${t.color}*` : t.text).join('');
+}
+
+// Tokens → display HTML (with tooltip if the status effect has a description)
+function tokensToHTML(tokens) {
+  return tokens.map(t => {
+    if (t.type === 'text') return escHtml(t.text).replace(/\n/g, '<br>');
+    const cls = t.color === 'default' ? 'kw' : `kw-${t.color}`;
+    const key = seKey(t.text, t.color);
+    const se  = statusEffects.find(s => s.id === key);
+    if (se && se.desc) {
+      return `<span class="${cls} kw-tip" data-tip="${escHtml(se.desc)}">${escHtml(t.text)}</span>`;
+    }
+    return `<span class="${cls}">${escHtml(t.text)}</span>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function makeKwTag(text, color) {
+  const span = document.createElement('span');
+  span.className = 'kw-tag';
+  span.dataset.kwcolor = color;
+  span.contentEditable = 'false';
+
+  const dot = document.createElement('span');
+  dot.className = 'kw-dot';
+  dot.style.background = KW_COLOR_HEX[color] || KW_COLOR_HEX.default;
+  dot.title = 'Click to cycle color';
+  dot.addEventListener('click', e => {
+    e.stopPropagation();
+    const cur = span.dataset.kwcolor;
+    const next = KW_COLORS[(KW_COLORS.indexOf(cur) + 1) % KW_COLORS.length];
+    span.dataset.kwcolor = next;
+    dot.style.background = KW_COLOR_HEX[next];
+  });
+
+  const label = document.createElement('span');
+  label.textContent = text;
+
+  span.appendChild(dot);
+  span.appendChild(label);
+  return span;
+}
+
+function editorToRaw() {
+  let raw = '';
+  descLive.childNodes.forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      raw += node.textContent;
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      if (node.classList.contains('kw-tag')) {
+        const text  = node.querySelector('span:last-child')?.textContent || '';
+        const color = node.dataset.kwcolor || 'default';
+        raw += `*${text}|${color}*`;
+      } else if (node.tagName === 'BR') {
+        raw += '\n';
+      } else {
+        raw += node.innerText || node.textContent;
+      }
+    }
+  });
+  return raw;
+}
+
+function editorFromRaw(raw) {
+  descLive.innerHTML = '';
+  const tokens = parseDesc(raw);
+  tokens.forEach(t => {
+    if (t.type === 'text') {
+      t.text.split('\n').forEach((line, i) => {
+        if (i > 0) descLive.appendChild(document.createElement('br'));
+        if (line) descLive.appendChild(document.createTextNode(line));
+      });
+    } else {
+      descLive.appendChild(makeKwTag(t.text, t.color));
+    }
+  });
+}
+
+descLive.addEventListener('keydown', e => {
+  if (e.key !== '*') return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+  if (!descLive.contains(range.commonAncestorContainer)) return;
+  e.preventDefault();
+
+  const ancestor = range.commonAncestorContainer;
+  const kwTag = ancestor.nodeType === Node.ELEMENT_NODE && ancestor.classList.contains('kw-tag')
+    ? ancestor
+    : ancestor.parentElement?.closest('.kw-tag');
+
+  if (kwTag && descLive.contains(kwTag)) {
+    const text = kwTag.querySelector('span:last-child')?.textContent || kwTag.textContent;
+    const textNode = document.createTextNode(text);
+    kwTag.replaceWith(textNode);
+    const newRange = document.createRange();
+    newRange.selectNode(textNode);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+    return;
+  }
+
+  const text = range.toString().trim();
+  if (!text) return;
+  range.deleteContents();
+  const tag = makeKwTag(text, activeKwColor);
+  range.insertNode(tag);
+  const newRange = document.createRange();
+  newRange.setStartAfter(tag);
+  newRange.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
+});
+
+descLive.addEventListener('focus', () => descLive.classList.remove('empty'));
+descLive.addEventListener('blur', () => {
+  if (!descLive.textContent.trim() && !descLive.querySelector('.kw-tag')) {
+    descLive.classList.add('empty');
+  }
+});
+descLive.classList.add('empty');
+
+/* ════════════════════════════════════════════
+   GLOBAL STATUS-EFFECT TOOLTIP
+════════════════════════════════════════════ */
+const globalTip = document.createElement('div');
+globalTip.className = 'global-kw-tip';
+document.body.appendChild(globalTip);
+
+function positionGlobalTip(targetEl) {
+  const rect = globalTip.getBoundingClientRect();
+  const anchor = targetEl.getBoundingClientRect();
+  const margin = 8;
+
+  let left = anchor.left + anchor.width / 2 - rect.width / 2;
+  left = Math.max(margin, Math.min(left, window.innerWidth - rect.width - margin));
+
+  let top = anchor.top - rect.height - margin;
+  if (top < margin) top = anchor.bottom + margin;
+
+  globalTip.style.left = `${left}px`;
+  globalTip.style.top = `${top}px`;
+}
+
+document.addEventListener('mouseover', e => {
+  const el = e.target.closest('.kw-tip');
+  if (!el) return;
+  globalTip.textContent = el.dataset.tip || '';
+  globalTip.classList.add('show');
+  requestAnimationFrame(() => positionGlobalTip(el));
+});
+
+document.addEventListener('mouseout', e => {
+  const el = e.target.closest('.kw-tip');
+  if (!el) return;
+  if (el.contains(e.relatedTarget)) return;
+  globalTip.classList.remove('show');
+});
+
+/* ════════════════════════════════════════════
+   UTIL
+════════════════════════════════════════════ */
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+/* ════════════════════════════════════════════
+   FORM / SAVE / EDIT / DELETE
+════════════════════════════════════════════ */
+function getFormData() {
+  return {
+    id:    editingId || uid(),
+    title: document.getElementById('f-title').value.trim() || 'Unnamed Passive',
+    desc:  editorToRaw(),
+  };
+}
+
+async function savePassive() {
+  const passive = getFormData();
+  if (editingId) {
+    const idx = passives.findIndex(p => p.id === editingId);
+    if (idx !== -1) passives[idx] = passive;
+    editingId = null;
+    document.getElementById('form-title').textContent = 'New Passive';
+  } else {
+    passives.push(passive);
+  }
+  renderList(); toast('Saving…');
+  await persistPassives();
+  await syncStatusEffectsFromPassives();
+  toast('Passive saved!');
+}
+
+function resetForm() {
+  editingId = null;
+  document.getElementById('form-title').textContent = 'New Passive';
+  document.getElementById('f-title').value = '';
+  descLive.innerHTML = '';
+  descLive.classList.add('empty');
+}
+
+function editPassive(id) {
+  const passive = passives.find(p => p.id === id);
+  if (!passive) return;
+  editingId = id;
+  document.getElementById('form-title').textContent = 'Edit Passive';
+  document.getElementById('f-title').value = passive.title;
+  editorFromRaw(passive.desc || '');
+  descLive.classList.remove('empty');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function deletePassive(id) {
+  passives = passives.filter(p => p.id !== id);
+  if (editingId === id) resetForm();
+  renderList(); toast('Removing…');
+  await persistPassives();
+}
+
+/* ════════════════════════════════════════════
+   COLLECTION LIST (search-filtered)
+════════════════════════════════════════════ */
+function renderList() {
+  const list = document.getElementById('passive-list');
+  const query = (document.getElementById('search-input').value || '').trim().toLowerCase();
+
+  const visible = passives.filter(p => {
+    if (!query) return true;
+    const haystack = `${p.title} ${p.desc || ''}`.toLowerCase();
+    return haystack.includes(query);
+  });
+
+  document.getElementById('passive-count').textContent = query
+    ? `${visible.length} of ${passives.length} passive${passives.length !== 1 ? 's' : ''}`
+    : `${passives.length} passive${passives.length !== 1 ? 's' : ''}`;
+
+  list.innerHTML = '';
+  if (!passives.length) {
+    list.innerHTML = `<div class="empty-state"><strong>No Passives Yet</strong>Write your first passive and save it to start your collection.</div>`;
+    return;
+  }
+  if (!visible.length) {
+    list.innerHTML = `<div class="empty-state"><strong>No Matches</strong>Try a different search term.</div>`;
+    return;
+  }
+
+  visible.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'passive-item';
+
+    const head = document.createElement('div');
+    head.className = 'passive-item-head';
+    head.innerHTML = `
+      <h3 class="passive-title">${escHtml(p.title)}</h3>
+      <div class="passive-actions">
+        <button class="thumb-btn" onclick="editPassive('${p.id}')">Edit</button>
+        <button class="thumb-btn del" onclick="deletePassive('${p.id}')">✕</button>
+      </div>
+    `;
+
+    const body = document.createElement('div');
+    body.className = 'passive-body';
+    body.innerHTML = tokensToHTML(parseDesc(p.desc || ''));
+
+    item.appendChild(head);
+    item.appendChild(body);
+    list.appendChild(item);
+  });
+}
+
+function clearFilters() {
+  document.getElementById('search-input').value = '';
+  renderList();
+}
+
+/* ════════════════════════════════════════════
+   SUPABASE + PERSIST
+   (Cloud sync uses a "passives" table mirroring "cards":
+    id, user_id, passive_data, created_at. Guests use localStorage
+    automatically — no setup needed for that path.)
+════════════════════════════════════════════ */
+const SB_URL = 'https://efprarpfgwiihrbwgxhz.supabase.co';
+const SB_KEY = 'sb_publishable_xx51FbZeklVxb8subL8fNQ_gVMQogIl';
+
+function sbHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Prefer': 'return=representation'
+  };
+}
+
+function getSession() {
+  try { return JSON.parse(sessionStorage.getItem('kenosis_session') || 'null'); } catch(e) { return null; }
+}
+
+function signOut() {
+  sessionStorage.removeItem('kenosis_session');
+  window.location.replace('./index.html');
+}
+
+async function persistPassives() {
+  const session = getSession();
+  if (!session || session.guest) {
+    try { localStorage.setItem('kenosis_passives_guest', JSON.stringify(passives)); } catch(e) {}
+    return;
+  }
+  try {
+    await fetch(`${SB_URL}/rest/v1/passives?user_id=eq.${session.id}`, {
+      method: 'DELETE', headers: sbHeaders()
+    });
+    if (passives.length > 0) {
+      await fetch(`${SB_URL}/rest/v1/passives`, {
+        method: 'POST',
+        headers: sbHeaders(),
+        body: JSON.stringify(passives.map(p => ({ user_id: session.id, passive_data: p })))
+      });
+    }
+  } catch(e) {
+    console.warn('Supabase sync failed, saving locally:', e);
+    try { localStorage.setItem('kenosis_passives_' + session.id, JSON.stringify(passives)); } catch(_) {}
+  }
+}
+
+async function loadPassives() {
+  const session = getSession();
+  if (!session || session.guest) {
+    try {
+      const raw = localStorage.getItem('kenosis_passives_guest');
+      passives = raw ? JSON.parse(raw) : [];
+    } catch(e) { passives = []; }
+    return;
+  }
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/passives?user_id=eq.${session.id}&select=passive_data&order=created_at.asc`,
+      { headers: sbHeaders() }
+    );
+    if (!res.ok) throw new Error('fetch failed');
+    const rows = await res.json();
+    passives = rows.map(r => r.passive_data);
+  } catch(e) {
+    console.warn('Could not load from Supabase, using local fallback:', e);
+    try {
+      const raw = localStorage.getItem('kenosis_passives_' + session.id);
+      passives = raw ? JSON.parse(raw) : [];
+    } catch(_) { passives = []; }
+  }
+}
+
+/* ── Show username in header ── */
+(function initHeader() {
+  try {
+    const session = getSession();
+    const el = document.getElementById('headerUser');
+    if (el && session) el.textContent = session.guest ? 'Guest' : (session.name || session.email);
+  } catch(e) {}
+})();
+
+/* ════════════════════════════════════════════
+   EXPORT / IMPORT
+════════════════════════════════════════════ */
+function exportPassives() {
+  const blob = new Blob([JSON.stringify(passives, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'kenosis-passives.json'; a.click();
+  toast('Passives exported!');
+}
+document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-file').click());
+document.getElementById('import-file').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (Array.isArray(imported)) {
+        passives = imported; persistPassives();
+        renderList();
+        toast(`Imported ${imported.length} passive(s)!`);
+      } else { toast('Invalid file.'); }
+    } catch { toast('Could not parse file.'); }
+  };
+  reader.readAsText(file); e.target.value = '';
+});
+
+/* ════════════════════════════════════════════
+   STATUS EFFECTS (shared with Card Planner / Status Effects page)
+════════════════════════════════════════════ */
+let statusEffects = []; // [{ id, text, color, desc }]
+
+function seKey(text, color) { return `${text.trim().toLowerCase()}|${color || 'default'}`; }
+
+async function loadStatusEffects() {
+  const session = getSession();
+  if (!session || session.guest) {
+    try { statusEffects = JSON.parse(localStorage.getItem('kenosis_se_guest') || '[]'); } catch(e) { statusEffects = []; }
+    return;
+  }
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/status_effects?user_id=eq.${session.id}&select=effect_data`,
+      { headers: sbHeaders() }
+    );
+    if (!res.ok) throw new Error();
+    const rows = await res.json();
+    statusEffects = rows.map(r => r.effect_data);
+  } catch(e) {
+    try { statusEffects = JSON.parse(localStorage.getItem('kenosis_se_' + session.id) || '[]'); } catch(_) { statusEffects = []; }
+  }
+}
+
+async function persistStatusEffects() {
+  const session = getSession();
+  if (!session || session.guest) {
+    try { localStorage.setItem('kenosis_se_guest', JSON.stringify(statusEffects)); } catch(e) {}
+    return;
+  }
+  try {
+    await fetch(`${SB_URL}/rest/v1/status_effects?user_id=eq.${session.id}`, {
+      method: 'DELETE', headers: sbHeaders()
+    });
+    if (statusEffects.length) {
+      await fetch(`${SB_URL}/rest/v1/status_effects`, {
+        method: 'POST',
+        headers: sbHeaders(),
+        body: JSON.stringify(statusEffects.map(e => ({ user_id: session.id, effect_data: e })))
+      });
+    }
+  } catch(e) {
+    try { localStorage.setItem('kenosis_se_' + session.id, JSON.stringify(statusEffects)); } catch(_) {}
+  }
+}
+
+// Called after saving a passive — scans all passives for bold keywords
+// and upserts any new ones into statusEffects (never overwrites desc)
+async function syncStatusEffectsFromPassives() {
+  let changed = false;
+  passives.forEach(passive => {
+    const tokens = parseDesc(passive.desc || '');
+    tokens.filter(t => t.type === 'kw').forEach(t => {
+      const key = seKey(t.text, t.color);
+      if (!statusEffects.find(s => s.id === key)) {
+        statusEffects.push({
+          id:    key,
+          text:  t.text.trim(),
+          color: t.color || 'default',
+          desc:  ''
+        });
+        changed = true;
+      }
+    });
+  });
+  if (changed) await persistStatusEffects();
+}
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+(async function init() {
+  await loadPassives();
+  await loadStatusEffects();
+  renderList();
+})();
+</script>
+</body>
+</html>
