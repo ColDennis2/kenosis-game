@@ -128,13 +128,8 @@
     overflow: hidden;
   }
   .sidebar-head {
-    padding: 0.75rem 0.75rem 0;
+    padding: 0.85rem 1rem 0.7rem;
     border-bottom: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .sidebar-head-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -146,47 +141,6 @@
     text-transform: uppercase;
     color: var(--text-dim);
   }
-  .btn-add-se {
-    display: flex; align-items: center; gap: 3px;
-    padding: 0.25rem 0.55rem;
-    background: var(--gold); color: #0D0F14;
-    border: none; border-radius: 4px;
-    font-size: 0.68rem; font-weight: 600;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .btn-add-se:hover { background: #d9b85c; }
-
-  /* Search */
-  .sidebar-search {
-    position: relative;
-  }
-  .sidebar-search input {
-    width: 100%; padding: 0.35rem 0.65rem 0.35rem 1.8rem;
-    background: var(--bg); border: 1px solid var(--border2);
-    border-radius: 6px; color: var(--text);
-    font-family: 'Inter', sans-serif; font-size: 0.72rem;
-    outline: none; transition: border-color 0.13s;
-  }
-  .sidebar-search input:focus { border-color: var(--gold-dim); }
-  .sidebar-search input::placeholder { color: var(--text-dim); }
-  .sidebar-search-icon {
-    position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%);
-    color: var(--text-dim); pointer-events: none; font-size: 0.7rem;
-  }
-
-  /* Colour filter chips */
-  .sidebar-filters {
-    display: flex; gap: 0.25rem; flex-wrap: wrap; padding-bottom: 0.6rem;
-  }
-  .filter-chip {
-    padding: 0.15rem 0.5rem; border-radius: 100px;
-    border: 1px solid var(--border2); background: transparent;
-    color: var(--text-dim); font-size: 0.62rem; font-weight: 500;
-    cursor: pointer; transition: all 0.13s; display: flex; align-items: center; gap: 4px;
-  }
-  .filter-chip:hover { border-color: var(--gold-dim); color: var(--gold); }
-  .filter-chip.active { border-color: var(--gold); background: rgba(201,168,76,0.1); color: var(--gold); }
-  .filter-dot { width: 7px; height: 7px; border-radius: 50%; }
   .se-count {
     font-size: 0.65rem;
     color: var(--text-dim);
@@ -428,76 +382,7 @@
     font-size: 0.7rem;
   }
 
-  /* ── Add effect modal ── */
-  .modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 500;
-  }
-  .modal-backdrop.hidden { display: none; }
-  .modal {
-    background: var(--surface); border: 1px solid var(--border2);
-    border-radius: 12px; padding: 1.5rem;
-    width: 100%; max-width: 340px;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
-    display: flex; flex-direction: column; gap: 1rem;
-  }
-  .modal h3 { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
-  .modal-field { display: flex; flex-direction: column; gap: 0.35rem; }
-  .modal-field label { font-size: 0.68rem; color: var(--text-dim); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
-  .modal-field input {
-    padding: 0.5rem 0.7rem; background: var(--bg);
-    border: 1px solid var(--border2); border-radius: 6px;
-    color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.85rem;
-    outline: none; transition: border-color 0.13s;
-  }
-  .modal-field input:focus { border-color: var(--gold); }
-  .modal-field input::placeholder { color: var(--text-dim); }
-  .modal-colors { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .modal-color-opt {
-    display: flex; align-items: center; gap: 0.35rem;
-    padding: 0.28rem 0.6rem; border-radius: 100px;
-    border: 1px solid var(--border2); cursor: pointer;
-    font-size: 0.7rem; color: var(--text-dim); transition: all 0.13s;
-  }
-  .modal-color-opt:hover { border-color: var(--gold-dim); color: var(--text); }
-  .modal-color-opt.selected { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.1); }
-  .modal-color-dot { width: 9px; height: 9px; border-radius: 50%; }
-  .modal-btns { display: flex; gap: 0.5rem; justify-content: flex-end; }
-  .modal-btn-cancel {
-    padding: 0.35rem 0.85rem; background: transparent; color: var(--text-dim);
-    border: 1px solid var(--border2); border-radius: 6px; font-size: 0.72rem;
-    cursor: pointer; transition: all 0.13s;
-  }
-  .modal-btn-cancel:hover { color: var(--text); }
-  .modal-btn-confirm {
-    padding: 0.35rem 0.85rem; background: var(--gold); color: #0D0F14;
-    border: none; border-radius: 6px; font-size: 0.72rem; font-weight: 600;
-    cursor: pointer; transition: all 0.13s;
-  }
-  .modal-btn-confirm:hover { background: #d9b85c; }
-
-  /* ── Autocomplete dropdown ── */
-  .desc-wrap { position: relative; }
-  .se-autocomplete {
-    position: absolute; left: 0; right: 0;
-    background: var(--surface); border: 1px solid var(--border2);
-    border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    z-index: 50; max-height: 180px; overflow-y: auto;
-    display: none;
-  }
-  .se-autocomplete.open { display: block; }
-  .se-ac-item {
-    display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.45rem 0.75rem; cursor: pointer;
-    transition: background 0.1s; font-size: 0.78rem;
-  }
-  .se-ac-item:hover, .se-ac-item.highlighted { background: var(--surface2); }
-  .se-ac-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .se-ac-name { color: var(--text); font-weight: 500; }
-  .se-ac-color { font-size: 0.65rem; color: var(--text-dim); margin-left: auto; }
-
-  /* ── Toast ── */
+  /* Toast */
   #toast {
     position: fixed; bottom: 2rem; left: 50%;
     transform: translateX(-50%) translateY(12px);
@@ -525,6 +410,7 @@
   <h1>Kenosis <span>Status Effects</span></h1>
   <nav class="header-nav">
     <a href="./card-forge.html">Card Planner</a>
+    <a href="./passive-forge.html">Passives</a>
     <a href="./lore.html">Lore</a>
     <a href="./status-effects.html" class="active">Status Effects</a>
   </nav>
@@ -539,29 +425,8 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-head">
-      <div class="sidebar-head-top">
-        <h2>Effects <span class="se-count" id="seCount">0</span></h2>
-        <button class="btn-add-se" onclick="showAddModal()">+ Add</button>
-      </div>
-      <div class="sidebar-search">
-        <span class="sidebar-search-icon">⌕</span>
-        <input type="text" id="seSearch" placeholder="Search effects…" oninput="renderList()">
-      </div>
-      <div class="sidebar-filters" id="seFilters">
-        <div class="filter-chip active" data-color="all" onclick="setFilter('all',this)">All</div>
-        <div class="filter-chip" data-color="default" onclick="setFilter('default',this)">
-          <span class="filter-dot" style="background:#a0aab8"></span>Default
-        </div>
-        <div class="filter-chip" data-color="red" onclick="setFilter('red',this)">
-          <span class="filter-dot" style="background:#e05555"></span>Red
-        </div>
-        <div class="filter-chip" data-color="orange" onclick="setFilter('orange',this)">
-          <span class="filter-dot" style="background:#e07030"></span>Orange
-        </div>
-        <div class="filter-chip" data-color="yellow" onclick="setFilter('yellow',this)">
-          <span class="filter-dot" style="background:#d4b832"></span>Yellow
-        </div>
-      </div>
+      <h2>Effects</h2>
+      <span class="se-count" id="seCount">0</span>
     </div>
     <div class="se-list" id="seList"></div>
   </aside>
@@ -599,13 +464,9 @@
 
         <div class="field">
           <label>Description</label>
-          <div class="desc-wrap">
-            <textarea class="desc-area" id="seDesc"
-              placeholder="Describe what this status effect does…&#10;e.g. Burning: take 2 damage at the start of each turn.&#10;&#10;Type @ to reference another status effect."
-              oninput="onDescInput(event)" onkeydown="onDescKeydown(event)"></textarea>
-            <div class="se-autocomplete" id="seAutocomplete"></div>
-          </div>
-          <p class="field-hint">Shown as a tooltip on bolded keywords in cards. Type <strong>@</strong> to reference another effect.</p>
+          <textarea class="desc-area" id="seDesc"
+            placeholder="Describe what this status effect does…&#10;e.g. Burning: take 2 damage at the start of each turn."></textarea>
+          <p class="field-hint">This text appears as a tooltip when hovering over the bolded keyword on any card.</p>
         </div>
 
         <div class="field" id="appearsOnField">
@@ -614,39 +475,6 @@
         </div>
 
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- Add Effect Modal -->
-<div class="modal-backdrop hidden" id="addModal" onclick="hideAddModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <h3>Add Status Effect</h3>
-    <div class="modal-field">
-      <label>Name</label>
-      <input type="text" id="newSeName" placeholder="e.g. Burning" maxlength="40"
-             onkeydown="if(event.key==='Enter')confirmAdd()">
-    </div>
-    <div class="modal-field">
-      <label>Colour</label>
-      <div class="modal-colors" id="modalColors">
-        <div class="modal-color-opt selected" data-color="default" onclick="selectModalColor(this)">
-          <span class="modal-color-dot" style="background:#a0aab8"></span>Default
-        </div>
-        <div class="modal-color-opt" data-color="red" onclick="selectModalColor(this)">
-          <span class="modal-color-dot" style="background:#e05555"></span>Red
-        </div>
-        <div class="modal-color-opt" data-color="orange" onclick="selectModalColor(this)">
-          <span class="modal-color-dot" style="background:#e07030"></span>Orange
-        </div>
-        <div class="modal-color-opt" data-color="yellow" onclick="selectModalColor(this)">
-          <span class="modal-color-dot" style="background:#d4b832"></span>Yellow
-        </div>
-      </div>
-    </div>
-    <div class="modal-btns">
-      <button class="modal-btn-cancel" onclick="hideAddModal()">Cancel</button>
-      <button class="modal-btn-confirm" onclick="confirmAdd()">Add Effect</button>
     </div>
   </div>
 </div>
@@ -682,24 +510,15 @@ function signOut() {
 })();
 
 /* ── Colour map ── */
-const KW_COLOR_HEX   = { default:'#a0aab8', red:'#e05555', orange:'#e07030', yellow:'#d4b832' };
+const KW_COLOR_HEX = { default:'#a0aab8', red:'#e05555', orange:'#e07030', yellow:'#d4b832' };
 const KW_COLOR_LABEL = { default:'Default', red:'Red', orange:'Orange', yellow:'Yellow' };
 
 /* ── State ── */
 let statusEffects = [];
 let cards         = [];
 let currentId     = null;
-let activeFilter  = 'all';
 
 function seKey(text, color) { return `${text.trim().toLowerCase()}|${color || 'default'}`; }
-
-/* ── Filter ── */
-function setFilter(color, el) {
-  activeFilter = color;
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  renderList();
-}
 
 /* ── Load ── */
 async function loadData() {
@@ -773,30 +592,23 @@ function parseKeywords(raw) {
 
 /* ── Render sidebar ── */
 function renderList() {
-  const list  = document.getElementById('seList');
-  const query = (document.getElementById('seSearch')?.value || '').toLowerCase().trim();
+  const list = document.getElementById('seList');
   document.getElementById('seCount').textContent = statusEffects.length;
-
-  let visible = [...statusEffects].sort((a,b) => a.text.localeCompare(b.text));
-  if (activeFilter !== 'all') visible = visible.filter(s => s.color === activeFilter);
-  if (query) visible = visible.filter(s => s.text.toLowerCase().includes(query) || (s.desc||'').toLowerCase().includes(query));
 
   if (!statusEffects.length) {
     list.innerHTML = `<div class="se-empty">
       No status effects yet.<br><br>
       Bold a word in the <a href="./card-forge.html">Card Planner</a><br>
-      and save the card — it will appear here.<br><br>
-      Or press <strong>+ Add</strong> to create one manually.
+      and save the card — it will appear here.
     </div>`;
     return;
   }
-  if (!visible.length) {
-    list.innerHTML = `<div class="se-empty">No effects match your search.</div>`;
-    return;
-  }
+
+  // Sort alphabetically
+  const sorted = [...statusEffects].sort((a, b) => a.text.localeCompare(b.text));
 
   list.innerHTML = '';
-  visible.forEach(se => {
+  sorted.forEach(se => {
     const item = document.createElement('div');
     item.className = 'se-item' + (se.id === currentId ? ' active' : '');
     item.onclick = () => openEffect(se.id);
@@ -807,12 +619,7 @@ function renderList() {
 
     const name = document.createElement('div');
     name.className = 'se-item-name';
-    if (query && se.text.toLowerCase().includes(query)) {
-      const idx = se.text.toLowerCase().indexOf(query);
-      name.innerHTML = escHtml(se.text.slice(0,idx))
-        + `<mark style="background:rgba(201,168,76,0.25);color:var(--gold);border-radius:2px">${escHtml(se.text.slice(idx,idx+query.length))}</mark>`
-        + escHtml(se.text.slice(idx+query.length));
-    } else { name.textContent = se.text; }
+    name.textContent = se.text;
 
     const colorLabel = document.createElement('div');
     colorLabel.className = 'se-item-color-label';
@@ -822,7 +629,10 @@ function renderList() {
     badge.className = 'se-item-desc-badge' + (se.desc ? ' has-desc' : '');
     badge.title = se.desc ? 'Has description' : 'No description yet';
 
-    item.appendChild(dot); item.appendChild(name); item.appendChild(colorLabel); item.appendChild(badge);
+    item.appendChild(dot);
+    item.appendChild(name);
+    item.appendChild(colorLabel);
+    item.appendChild(badge);
     list.appendChild(item);
   });
 }
@@ -909,131 +719,6 @@ document.addEventListener('keydown', e => {
     e.preventDefault();
     saveEffect();
   }
-});
-
-/* ── Add effect modal ── */
-function showAddModal() {
-  document.getElementById('newSeName').value = '';
-  document.querySelectorAll('.modal-color-opt').forEach(o => o.classList.remove('selected'));
-  document.querySelector('.modal-color-opt[data-color="default"]').classList.add('selected');
-  document.getElementById('addModal').classList.remove('hidden');
-  setTimeout(() => document.getElementById('newSeName').focus(), 50);
-}
-function hideAddModal(e) {
-  if (e && e.target !== document.getElementById('addModal')) return;
-  document.getElementById('addModal').classList.add('hidden');
-}
-function selectModalColor(el) {
-  document.querySelectorAll('.modal-color-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-}
-async function confirmAdd() {
-  const name  = document.getElementById('newSeName').value.trim();
-  const color = document.querySelector('.modal-color-opt.selected')?.dataset.color || 'default';
-  if (!name) { document.getElementById('newSeName').focus(); return; }
-  const key = seKey(name, color);
-  if (statusEffects.find(s => s.id === key)) {
-    toast('That effect already exists'); return;
-  }
-  statusEffects.push({ id: key, text: name, color, desc: '' });
-  document.getElementById('addModal').classList.add('hidden');
-  toast('Saving…');
-  await persistStatusEffects();
-  renderList();
-  openEffect(key);
-  toast('Effect added');
-}
-
-/* ── @ autocomplete in description textarea ── */
-let _acQuery = null;
-let _acStart = 0;
-let _acHighlight = -1;
-
-function onDescInput(e) {
-  const ta  = e.target;
-  const pos = ta.selectionStart;
-  const val = ta.value;
-  // Walk back from cursor to find an @ that starts the query
-  let i = pos - 1;
-  while (i >= 0 && val[i] !== '@' && val[i] !== '\n') i--;
-  if (i >= 0 && val[i] === '@') {
-    _acStart = i;
-    _acQuery = val.slice(i + 1, pos).toLowerCase();
-    showAutocomplete(_acQuery);
-  } else {
-    closeAutocomplete();
-  }
-}
-
-function onDescKeydown(e) {
-  const ac = document.getElementById('seAutocomplete');
-  if (!ac.classList.contains('open')) return;
-  const items = ac.querySelectorAll('.se-ac-item');
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    _acHighlight = Math.min(_acHighlight + 1, items.length - 1);
-    items.forEach((el,i) => el.classList.toggle('highlighted', i === _acHighlight));
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    _acHighlight = Math.max(_acHighlight - 1, 0);
-    items.forEach((el,i) => el.classList.toggle('highlighted', i === _acHighlight));
-  } else if (e.key === 'Enter' || e.key === 'Tab') {
-    if (_acHighlight >= 0 && items[_acHighlight]) {
-      e.preventDefault();
-      items[_acHighlight].click();
-    }
-  } else if (e.key === 'Escape') {
-    closeAutocomplete();
-  }
-}
-
-function showAutocomplete(query) {
-  const ac = document.getElementById('seAutocomplete');
-  const matches = statusEffects
-    .filter(s => s.id !== currentId && s.text.toLowerCase().includes(query))
-    .sort((a,b) => a.text.localeCompare(b.text))
-    .slice(0, 8);
-
-  if (!matches.length) { closeAutocomplete(); return; }
-
-  _acHighlight = -1;
-  ac.innerHTML = '';
-  matches.forEach(se => {
-    const item = document.createElement('div');
-    item.className = 'se-ac-item';
-    item.innerHTML = `
-      <span class="se-ac-dot" style="background:${KW_COLOR_HEX[se.color]||KW_COLOR_HEX.default}"></span>
-      <span class="se-ac-name">${escHtml(se.text)}</span>
-      <span class="se-ac-color">${KW_COLOR_LABEL[se.color]||se.color}</span>`;
-    item.onclick = () => insertReference(se);
-    ac.appendChild(item);
-  });
-  ac.classList.add('open');
-}
-
-function insertReference(se) {
-  const ta  = document.getElementById('seDesc');
-  const val = ta.value;
-  const pos = ta.selectionStart;
-  // Replace from @ to cursor with the effect name
-  const before = val.slice(0, _acStart);
-  const after  = val.slice(pos);
-  ta.value = before + se.text + after;
-  const newPos = _acStart + se.text.length;
-  ta.setSelectionRange(newPos, newPos);
-  ta.focus();
-  closeAutocomplete();
-}
-
-function closeAutocomplete() {
-  const ac = document.getElementById('seAutocomplete');
-  ac.classList.remove('open');
-  _acQuery = null; _acHighlight = -1;
-}
-
-// Close autocomplete on outside click
-document.addEventListener('click', e => {
-  if (!e.target.closest('.desc-wrap')) closeAutocomplete();
 });
 
 /* ── Init ── */
