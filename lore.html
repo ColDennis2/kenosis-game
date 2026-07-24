@@ -309,8 +309,6 @@
 
   /* Fields */
   .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem; }
-  .field-hint { font-size: 0.67rem; color: var(--text-dim); line-height: 1.4; }
-  .field-hint code { background: var(--surface2); border-radius: 3px; padding: 0.05rem 0.3rem; font-size: 0.65rem; font-family: monospace; }
   .field label {
     font-size: 0.68rem;
     font-weight: 600;
@@ -433,7 +431,6 @@
     color: var(--text);
     white-space: pre-wrap;
   }
-  .read-body .lore-em { color: var(--gold); font-weight: 700; }
   .read-actions {
     margin-top: 2rem;
     display: flex;
@@ -552,7 +549,6 @@
         <div class="field">
           <label>Text</label>
           <textarea id="f-body" placeholder="Write the lore entry here…"></textarea>
-          <div class="field-hint">Wrap text in <code>**double asterisks**</code> for gold bold emphasis (e.g. a quote).</div>
         </div>
       </div>
     </div>
@@ -601,67 +597,6 @@ function signOut() {
   if (el && s) el.textContent = s.guest ? 'Guest' : (s.name || s.email);
 })();
 
-/* ── Legacy content cleanup ──
-   Older versions of this page used a rich-text (contenteditable) editor
-   for the body field, which saved the browser's own generated markup
-   (nested <div>/<span style="..."> from Chrome's execCommand output).
-   The current editor is a plain <textarea>, so that old markup now shows
-   up as literal, broken-looking text. This converts any such legacy HTML
-   into clean plain text, preserving bold emphasis as a simple **word**
-   marker so it still renders distinctly (see renderLoreBody below). */
-function looksLikeHtml(s) { return /<[a-z][\s\S]*>/i.test(s || ''); }
-
-function htmlBodyToPlain(raw) {
-  const tmp = document.createElement('div');
-  tmp.innerHTML = raw;
-
-  function isBold(el) {
-    if (!el || el.nodeType !== 1) return false;
-    const w = (el.style && el.style.fontWeight) || '';
-    return el.tagName === 'B' || el.tagName === 'STRONG' || w === 'bold' || parseInt(w, 10) >= 600;
-  }
-
-  function walk(node) {
-    let out = '';
-    node.childNodes.forEach(child => {
-      if (child.nodeType === Node.TEXT_NODE) {
-        out += child.textContent;
-      } else if (child.nodeType === Node.ELEMENT_NODE) {
-        if (child.tagName === 'BR') {
-          out += '\n';
-        } else if (child.tagName === 'DIV' || child.tagName === 'P') {
-          out += walk(child) + '\n';
-        } else if (isBold(child)) {
-          const inner = walk(child).trim();
-          out += inner ? `**${inner}**` : '';
-        } else {
-          out += walk(child);
-        }
-      }
-    });
-    return out;
-  }
-
-  return walk(tmp).replace(/\n{3,}/g, '\n\n').trim();
-}
-
-function migrateEntries(arr) {
-  let changed = false;
-  (arr || []).forEach(e => {
-    if (e.body && looksLikeHtml(e.body)) {
-      e.body = htmlBodyToPlain(e.body);
-      changed = true;
-    }
-  });
-  return changed;
-}
-
-// Renders stored plain text (with optional **bold** markers) as safe HTML —
-// everything is escaped first, so no HTML can sneak back in from typed text.
-function renderLoreBody(raw) {
-  return escHtml(raw).replace(/\*\*(.+?)\*\*/g, '<strong class="lore-em">$1</strong>');
-}
-
 /* ── State ── */
 let entries    = [];   // [{ id, title, body, image, order }]
 let currentId  = null;
@@ -672,7 +607,6 @@ async function loadEntries() {
   const s = getSession();
   if (!s || s.guest) {
     try { entries = JSON.parse(localStorage.getItem('kenosis_lore_guest') || '[]'); } catch(e) { entries = []; }
-    if (migrateEntries(entries)) persistEntries();
     return;
   }
   try {
@@ -686,7 +620,6 @@ async function loadEntries() {
   } catch(e) {
     try { entries = JSON.parse(localStorage.getItem('kenosis_lore_' + s.id) || '[]'); } catch(_) { entries = []; }
   }
-  if (migrateEntries(entries)) persistEntries();
 }
 
 async function persistEntries() {
@@ -737,10 +670,9 @@ function renderList() {
 
     const body = document.createElement('div');
     body.className = 'entry-item-body';
-    const snippetSrc = (entry.body || '').replace(/\*\*/g, '').replace(/\n+/g, ' ').trim();
     body.innerHTML = `
       <div class="entry-item-title">${escHtml(entry.title || 'Untitled')}</div>
-      <div class="entry-item-sub">${escHtml(snippetSrc.slice(0, 48))}${snippetSrc.length > 48 ? '…' : ''}</div>
+      <div class="entry-item-sub">${escHtml((entry.body || '').slice(0, 48))}${(entry.body||'').length > 48 ? '…' : ''}</div>
     `;
 
     const del = document.createElement('button');
@@ -795,7 +727,7 @@ function openEntry(id) {
   document.getElementById('readView').style.display    = '';
 
   document.getElementById('rv-title').textContent = entry.title || 'Untitled';
-  document.getElementById('rv-body').innerHTML  = renderLoreBody(entry.body || '');
+  document.getElementById('rv-body').textContent  = entry.body  || '';
   const img = document.getElementById('rv-image');
   if (entry.image) { img.src = entry.image; img.classList.add('visible'); }
   else             { img.src = ''; img.classList.remove('visible'); }
